@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: homefix-app
+    env: python
+    plan: free
+    rootDir: homeservices
+    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate --noinput
+    startCommand: gunicorn config.wsgi:application
+    envVars:
+      - key: DEBUG
+        value: "False"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ALLOWED_HOSTS
+        value: homefix-app.onrender.com
