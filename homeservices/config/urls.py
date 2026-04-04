@@ -1,10 +1,12 @@
 from django.contrib import admin
 from django.urls import path, include
+from django.http import HttpResponse
 from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('favicon.ico', lambda request: HttpResponse(status=204)),
     path('', include('services.urls')),  # Include our app's URLs
 ]
 
