@@ -1,0 +1,245 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Our Services - HomeFix{% endblock %}
+
+{% block extra_css %}
+<style>
+    .card-body .card-title,
+    .card-body .card-text {
+        text-align: center;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section with Blue Background -->
+<section class="bg-primary text-white py-5 mb-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center">
+                <h1 class="display-4 fw-bold mb-4">Our Services</h1>
+                <p class="lead mb-0">Professional home services delivered by trained experts. Explore our range of services and book online today.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Individual Services Section -->
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="text-center mb-5">All Our Services</h2>
+        </div>
+    </div>
+
+    <!-- Building Works Category -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <h3 class="border-bottom pb-2 mb-4">Building Works</h3>
+        </div>
+        
+        <!-- Loft Conversions -->
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <img src="{% static 'images/loft conversions.jpeg' %}" class="card-img-top" alt="Loft Conversions">
+                <div class="card-body">
+                    <h5 class="card-title">Loft Conversions</h5>
+                    <p class="card-text">Transform your unused loft space into a functional living area with our professional conversion services.</p>
+                </div>
+                <div class="card-footer bg-white border-top-0">
+                    <a href="{% url 'book_service' %}" class="btn btn-primary w-100">Request Quote</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Extensions -->
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <img src="{% static 'images/Extensions.jpeg' %}" class="card-img-top" alt="Extensions">
+                <div class="card-body">
+                    <h5 class="card-title">Extensions</h5>
+                    <p class="card-text">Expand your living space with our high-quality home extension services.</p>
+                </div>
+                <div class="card-footer bg-white border-top-0">
+                    <a href="{% url 'book_service' %}" class="btn btn-primary w-100">Request Quote</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- House Renovation -->
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <img src="{% static 'images/house_re.jpeg' %}" class="card-img-top" alt="House Renovation">
+                <div class="card-body">
+                    <h5 class="card-title">House Renovation</h5>
+                    <p class="card-text">Complete house renovation services to transform your property.</p>
+                </div>
+                <div class="card-footer bg-white border-top-0">
+                    <a href="{% url 'book_service' %}" class="btn btn-primary w-100">Request Quote</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Interior Finishing Category -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <h3 class="border-bottom pb-2 mb-4">Interior Finishing</h3>
+        </div>
+        
+        <!-- Painting -->
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <img src="{% static 'images/painting.jpeg' %}" class="card-img-top" alt="Painting">
+                <div class="card-body">
+                    <h5 class="card-title">Painting</h5>
+                    <p class="card-text">Professional interior and exterior painting services to refresh and transform your space.</p>
+                </div>
+                <div class="card-footer bg-white border-top-0">
+                    <a href="{% url 'book_service' %}" class="btn btn-primary w-100">Request Quote</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Wallpaper -->
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <img src="{% static 'images/wallpaper.jpeg' %}" class="card-img-top" alt="Wallpaper">
+                <div class="card-body">
+                    <h5 class="card-title">Wallpaper</h5>
+                    <p class="card-text">Expert wallpaper installation services to add style and character to your home.</p>
+                </div>
+                <div class="card-footer bg-white border-top-0">
+                    <a href="{% url 'book_service' %}" class="btn btn-primary w-100">Request Quote</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Plastering -->
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <img src="{% static 'images/house_re.jpeg' %}" class="card-img-top" alt="Plastering">
+                <div class="card-body">
+                    <h5 class="card-title">Plastering</h5>
+                    <p class="card-text">High-quality plastering services for smooth, durable walls and ceilings.</p>
+                </div>
+                <div class="card-footer bg-white border-top-0">
+                    <a href="{% url 'book_service' %}" class="btn btn-primary w-100">Request Quote</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tiling Fittings -->
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <img src="{% static 'images/bathroom&tilling.jpeg' %}" class="card-img-top" alt="Tiling Fittings">
+                <div class="card-body">
+                    <h5 class="card-title">Tiling Fittings</h5>
+                    <p class="card-text">Professional tiling services for bathrooms, kitchens, floors, and more.</p>
+                </div>
+                <div class="card-footer bg-white border-top-0">
+                    <a href="{% url 'book_service' %}" class="btn btn-primary w-100">Request Quote</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Flooring -->
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <img src="{% static 'images/flooring.jpeg' %}" class="card-img-top" alt="Flooring">
+                <div class="card-body">
+                    <h5 class="card-title">Flooring</h5>
+                    <p class="card-text">Professional flooring installation services for all types of flooring materials.</p>
+                </div>
+                <div class="card-footer bg-white border-top-0">
+                    <a href="{% url 'book_service' %}" class="btn btn-primary w-100">Request Quote</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Plumbing & Bathroom Category -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <h3 class="border-bottom pb-2 mb-4">Plumbing & Bathroom</h3>
+        </div>
+        
+        <!-- Bathroom Installation -->
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <img src="{% static 'images/bathroom&tilling.jpeg' %}" class="card-img-top" alt="Bathroom Installation">
+                <div class="card-body">
+                    <h5 class="card-title">Bathroom Installation</h5>
+                    <p class="card-text">Complete bathroom installation and renovation services.</p>
+                </div>
+                <div class="card-footer bg-white border-top-0">
+                    <a href="{% url 'book_service' %}" class="btn btn-primary w-100">Request Quote</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Plumbing -->
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <img src="{% static 'images/plumbing.jpg' %}" class="card-img-top" alt="Plumbing">
+                <div class="card-body">
+                    <h5 class="card-title">Plumbing</h5>
+                    <p class="card-text">Professional plumbing services including installations, repairs, and maintenance.</p>
+                </div>
+                <div class="card-footer bg-white border-top-0">
+                    <a href="{% url 'book_service' %}" class="btn btn-primary w-100">Request Quote</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Electrical & Maintenance Category -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <h3 class="border-bottom pb-2 mb-4">Electrical & Maintenance</h3>
+        </div>
+        
+        <!-- Electrical Work -->
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <img src="{% static 'images/electrician.jpeg' %}" class="card-img-top" alt="Electrical Work">
+                <div class="card-body">
+                    <h5 class="card-title">Electrical Work</h5>
+                    <p class="card-text">Comprehensive electrical services for residential and commercial properties.</p>
+                </div>
+                <div class="card-footer bg-white border-top-0">
+                    <a href="{% url 'book_service' %}" class="btn btn-primary w-100">Request Quote</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Roof Work & Repairs -->
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <img src="{% static 'images/roofwork&repair.jpeg' %}" class="card-img-top" alt="Roof Work & Repairs">
+                <div class="card-body">
+                    <h5 class="card-title">Roof Work & Repairs</h5>
+                    <p class="card-text">Expert roof maintenance and repair services to protect your home.</p>
+                </div>
+                <div class="card-footer bg-white border-top-0">
+                    <a href="{% url 'book_service' %}" class="btn btn-primary w-100">Request Quote</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Call to Action -->
+<section class="bg-light py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center">
+                <h2 class="mb-4">Ready to start your project?</h2>
+                <p class="lead mb-4">Contact us today for a free consultation and quote on your home improvement project.</p>
+                <a href="{% url 'book_service' %}" class="btn btn-primary btn-lg">Get in Touch</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

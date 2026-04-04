@@ -1,0 +1,404 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}HomeFix - Professional Property Maintenance{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Hero Section Styles */
+    .hero-section {
+        background-color: #004080;
+        color: white;
+        padding: 80px 0;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .wave-divider {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        overflow: hidden;
+        line-height: 0;
+    }
+    
+    .wave-divider svg {
+        position: relative;
+        display: block;
+        width: calc(100% + 1.3px);
+        height: 70px;
+    }
+    
+    .wave-divider .shape-fill {
+        fill: #FFFFFF;
+    }
+    
+    /* Service Cards */
+    .service-card {
+        transition: transform 0.3s ease;
+        height: 100%;
+        border-radius: 10px;
+        overflow: hidden;
+        border: none;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .service-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .service-icon {
+        font-size: 2.5rem;
+        color: #0074D9;
+        margin-bottom: 1rem;
+    }
+    
+    /* Booking Form */
+    .booking-form {
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        padding: 30px;
+        backdrop-filter: blur(5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+    
+    .booking-form input, .booking-form select {
+        background-color: rgba(255, 255, 255, 0.9);
+        border: none;
+        padding: 12px;
+        border-radius: 8px;
+    }
+    
+    /* Section Styles */
+    .section-title {
+        font-weight: 700;
+        color: #1a202c;
+        margin-bottom: 1.5rem;
+    }
+    
+    .feature-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background-color: #0074D9;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem;
+        color: white;
+        font-size: 1.5rem;
+    }
+    
+    /* Testimonial Cards */
+    .testimonial-card {
+        border: none;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        border-radius: 10px;
+    }
+    
+    .star-rating {
+        color: #FFD700;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-5 mb-lg-0">
+                <h1 class="display-4 fw-bold mb-4">Professional Home Services and Property Maintenance in London</h1>
+                <p class="lead mb-4">With 20 years of experience, Homefix offers high-quality, affordable property maintenance and home services throughout London.</p>
+                <div class="d-flex gap-3">
+                    <a href="{% url 'services' %}" class="btn btn-light btn-lg px-4 d-inline-flex align-items-center">
+                        Book a Service <i class="bi bi-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="booking-form">
+                    <h2 class="text-center mb-4">Request a Quote Today</h2>
+                    <form action="{% url 'services' %}" method="get">
+                        <div class="mb-3">
+                            <label for="serviceType" class="form-label">Service Type</label>
+                            <select class="form-select form-select-lg" id="serviceType" name="service">
+                                <option value="">Select a service</option>
+                                {% for service in services %}
+                                <option value="{{ service.id }}">{{ service.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="location" class="form-label">Location</label>
+                                <select class="form-select" id="location" name="location">
+                                    <option value="London">London</option>
+                                    <option value="Manchester">Manchester</option>
+                                    <option value="Birmingham">Birmingham</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="date" class="form-label">Preferred Date</label>
+                                <input type="date" class="form-control" id="date" name="date">
+                            </div>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-light btn-lg">Check Availability</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- Wave divider at bottom of hero section -->
+        <div class="wave-divider">
+            <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+                <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="shape-fill"></path>
+            </svg>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="py-5">
+        <h2 class="text-center mb-4">Our Specialized Services</h2>
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            {% for service in services %}
+            <div class="col">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <div class="text-center mb-3">
+                            {% if 'plumbing' in service.name|lower %}
+                                <img src="{% static 'images/plumbing.jpg' %}" class="img-fluid rounded mb-3" alt="{{ service.name }}" style="height: 120px; object-fit: cover;">
+                            {% elif 'electrical' in service.name|lower or 'electric' in service.name|lower %}
+                                <img src="{% static 'images/electrician.jpeg' %}" class="img-fluid rounded mb-3" alt="{{ service.name }}" style="height: 120px; object-fit: cover;">
+                            {% elif 'bathroom' in service.name|lower or 'tile' in service.name|lower or 'tiling' in service.name|lower %}
+                                <img src="{% static 'images/bathroom&tilling.jpeg' %}" class="img-fluid rounded mb-3" alt="{{ service.name }}" style="height: 120px; object-fit: cover;">
+                            {% elif 'paint' in service.name|lower or 'painting' in service.name|lower %}
+                                <img src="{% static 'images/painting.jpeg' %}" class="img-fluid rounded mb-3" alt="{{ service.name }}" style="height: 120px; object-fit: cover;">
+                            {% elif 'wallpaper' in service.name|lower %}
+                                <img src="{% static 'images/wallpaper.jpeg' %}" class="img-fluid rounded mb-3" alt="{{ service.name }}" style="height: 120px; object-fit: cover;">
+                            {% elif 'floor' in service.name|lower %}
+                                <img src="{% static 'images/flooring.jpeg' %}" class="img-fluid rounded mb-3" alt="{{ service.name }}" style="height: 120px; object-fit: cover;">
+                            {% elif 'garden' in service.name|lower or 'landscaping' in service.name|lower %}
+                                <img src="{% static 'images/gardening.jpeg' %}" class="img-fluid rounded mb-3" alt="{{ service.name }}" style="height: 120px; object-fit: cover;">
+                            {% elif 'roof' in service.name|lower %}
+                                <img src="{% static 'images/roofwork&repair.jpeg' %}" class="img-fluid rounded mb-3" alt="{{ service.name }}" style="height: 120px; object-fit: cover;">
+                            {% elif 'carpent' in service.name|lower or 'wood' in service.name|lower %}
+                                <img src="{% static 'images/carpenter.jpeg' %}" class="img-fluid rounded mb-3" alt="{{ service.name }}" style="height: 120px; object-fit: cover;">
+                            {% elif 'loft' in service.name|lower or 'conversion' in service.name|lower %}
+                                <img src="{% static 'images/loft conversions.jpeg' %}" class="img-fluid rounded mb-3" alt="{{ service.name }}" style="height: 120px; object-fit: cover;">
+                            {% elif 'extension' in service.name|lower %}
+                                <img src="{% static 'images/Extensions.jpeg' %}" class="img-fluid rounded mb-3" alt="{{ service.name }}" style="height: 120px; object-fit: cover;">
+                            {% elif 'renovation' in service.name|lower or 'build' in service.name|lower %}
+                                <img src="{% static 'images/house_re.jpeg' %}" class="img-fluid rounded mb-3" alt="{{ service.name }}" style="height: 120px; object-fit: cover;">
+                            {% elif 'clean' in service.name|lower %}
+                                <img src="{% static 'images/cleaning.jpeg' %}" class="img-fluid rounded mb-3" alt="{{ service.name }}" style="height: 120px; object-fit: cover;">
+                            {% else %}
+                                <img src="{% static 'images/maintenence.jpeg' %}" class="img-fluid rounded mb-3" alt="{{ service.name }}" style="height: 120px; object-fit: cover;">
+                            {% endif %}
+                        </div>
+                        <h5 class="card-title text-center">{{ service.name }}</h5>
+                        <p class="card-text text-center">{{ service.description }}</p>
+                        <p class="text-center text-muted">Starting from £{{ service.base_price }}</p>
+                    </div>
+                    <div class="card-footer bg-transparent border-0 text-center">
+                        <a href="{% url 'service_detail' service.id %}" class="btn btn-outline-primary">Learn More</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- View All Services Section -->
+    <section class="py-5 bg-light rounded">
+        <h3 class="text-center mb-4">All Our Services</h3>
+
+        <!-- First 6 services visible by default -->
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            <div class="col">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <img src="{% static 'images/loft conversions.jpeg' %}" class="img-fluid rounded mb-3" alt="Loft Conversions" style="height: 100px; object-fit: cover;">
+                        <h5>Loft Conversions</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <img src="{% static 'images/Extensions.jpeg' %}" class="img-fluid rounded mb-3" alt="Extensions" style="height: 100px; object-fit: cover;">
+                        <h5>Extensions</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <img src="{% static 'images/painting.jpeg' %}" class="img-fluid rounded mb-3" alt="Painting" style="height: 100px; object-fit: cover;">
+                        <h5>Painting</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <img src="{% static 'images/wallpaper.jpeg' %}" class="img-fluid rounded mb-3" alt="Wallpaper" style="height: 100px; object-fit: cover;">
+                        <h5>Wallpaper</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <img src="{% static 'images/maintenence.jpeg' %}" class="img-fluid rounded mb-3" alt="Plastering" style="height: 100px; object-fit: cover;">
+                        <h5>Plastering</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <img src="{% static 'images/bathroom.jpeg' %}" class="img-fluid rounded mb-3" alt="Bathroom Installation" style="height: 100px; object-fit: cover;">
+                        <h5>Bathroom Installation</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-4">
+            <button id="viewAllBtn" class="btn btn-outline-primary btn-lg">View All Services</button>
+        </div>
+
+        <!-- Remaining services hidden initially -->
+        <div id="allServices" style="display: none;" class="mt-4">
+            <div class="row row-cols-1 row-cols-md-4 g-4">
+                <div class="col">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center">
+                            <img src="{% static 'images/bathroom&tilling.jpeg' %}" class="img-fluid rounded mb-3" alt="Tiling Fittings" style="height: 100px; object-fit: cover;">
+                            <h5>Tiling Fittings</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center">
+                            <img src="{% static 'images/electrician.jpeg' %}" class="img-fluid rounded mb-3" alt="Electrical Work" style="height: 100px; object-fit: cover;">
+                            <h5>Electrical Work</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center">
+                            <img src="{% static 'images/plumbing.jpg' %}" class="img-fluid rounded mb-3" alt="Plumbing" style="height: 100px; object-fit: cover;">
+                            <h5>Plumbing</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center">
+                            <img src="{% static 'images/house_re.jpeg' %}" class="img-fluid rounded mb-3" alt="House Renovation" style="height: 100px; object-fit: cover;">
+                            <h5>House Renovation</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center">
+                            <img src="{% static 'images/flooring.jpeg' %}" class="img-fluid rounded mb-3" alt="Flooring" style="height: 100px; object-fit: cover;">
+                            <h5>Flooring</h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            document.getElementById('viewAllBtn').addEventListener('click', function() {
+                const allServices = document.getElementById('allServices');
+                const button = document.getElementById('viewAllBtn');
+
+                if (allServices.style.display === 'none' || !allServices.style.display) {
+                    allServices.style.display = 'block';
+                    button.textContent = 'Hide Services';
+                    allServices.scrollIntoView({ behavior: 'smooth' });
+                } else {
+                    allServices.style.display = 'none';
+                    button.textContent = 'View All Services';
+                }
+            });
+        </script>
+    </section>
+
+    <!-- Why Choose Us Section -->
+    <section class="py-5">
+        <h2 class="text-center mb-4">Why Choose Homefix</h2>
+        <div class="row">
+            <div class="col-lg-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-center mb-3">
+                            <div class="text-warning">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                        <p class="card-text">"Excellent service! The plumber arrived on time and fixed our leaking pipe quickly. Very professional and friendly."</p>
+                        <div class="text-end">
+                            <p class="mb-0 fw-bold">- Sarah Johnson</p>
+                            <small class="text-muted">London</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-center mb-3">
+                            <div class="text-warning">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                        <p class="card-text">"I've used HomeFix for electrical work and gardening. Both times the service was outstanding. Will definitely use again!"</p>
+                        <div class="text-end">
+                            <p class="mb-0 fw-bold">- Michael Brown</p>
+                            <small class="text-muted">Manchester</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-center mb-3">
+                            <div class="text-warning">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="far fa-star"></i>
+                            </div>
+                        </div>
+                        <p class="card-text">"The cleaning service was thorough and efficient. My house hasn't been this clean in ages! Booking was easy and straightforward."</p>
+                        <div class="text-end">
+                            <p class="mb-0 fw-bold">- Emma Wilson</p>
+                            <small class="text-muted">Birmingham</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock content %}
