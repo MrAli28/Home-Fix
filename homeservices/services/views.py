@@ -4,13 +4,28 @@ from django.contrib.auth import login, authenticate
 from django.contrib import messages
 from django.http import JsonResponse
 from django.db.models import Q
+from django.db.utils import OperationalError, ProgrammingError
 from .models import Service, Booking, ServiceArea, Review
 from .forms import BookingForm, UserRegistrationForm, UserProfileForm, ReviewForm
 
+
+def _safe_services_queryset():
+    try:
+        return Service.objects.all()
+    except (OperationalError, ProgrammingError):
+        return Service.objects.none()
+
+
+def _safe_service_areas_queryset():
+    try:
+        return ServiceArea.objects.all()
+    except (OperationalError, ProgrammingError):
+        return ServiceArea.objects.none()
+
 def home(request):
     """Home page view"""
-    services = Service.objects.all()
-    service_areas = ServiceArea.objects.all()
+    services = _safe_services_queryset()
+    service_areas = _safe_service_areas_queryset()
     return render(request, 'services/home.html', {
         'services': services,
         'service_areas': service_areas,
@@ -30,7 +45,7 @@ def terms_of_service(request):
 
 def services_list(request):
     """Services listing page"""
-    services = Service.objects.all()
+    services = _safe_services_queryset()
     return render(request, 'services/services.html', {'services': services})
 
 def service_detail(request, service_id):
@@ -42,7 +57,7 @@ def service_detail(request, service_id):
 
 def contact(request):
     """Contact page view"""
-    services = Service.objects.all()  # Pass services for the dropdown in contact form
+    services = _safe_services_queryset()  # Pass services for the dropdown in contact form
     return render(request, 'services/contact.html', {'services': services})
 
 def book_service(request, service_id=None):
@@ -52,7 +67,7 @@ def book_service(request, service_id=None):
         service = get_object_or_404(Service, id=service_id)
     
     # Get all services for the dropdown
-    services = Service.objects.all()
+    services = _safe_services_queryset()
     
     if request.method == 'POST':
         form = BookingForm(request.POST)
