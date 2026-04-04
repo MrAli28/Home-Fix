@@ -3,13 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
     <title>{% block title %}HomeFix UK{% endblock %}</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <style>
         :root {
             --primary-color: #004080;
@@ -17,28 +22,8 @@
         }
         .navbar-brand {
             font-size: 1.5rem;
-            font-weight: 600;
-        }
-        .btn-primary {
-            background-color: var(--primary-color);
-            border-color: var(--primary-color);
-        }
-        .btn-primary:hover {
-            background-color: #005bb5;
-            border-color: #005bb5;
-        }
-        .navbar {
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        footer {
-            background-color: #004080;
-            color: white;
-            padding: 2rem 0;
-        }
-        .home-icon {
-            color: var(--primary-color);
-            font-size: 1.8rem;
-            margin-right: 0.5rem;
+            font-weight: 700;
+            letter-spacing: 0.02em;
         }
 
     </style>
@@ -46,10 +31,10 @@
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark sticky-top" style="background-color: #004080;">
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top hf-navbar">
         <div class="container">
             <a class="navbar-brand fw-bold" href="{% url 'home' %}"><i class="fas fa-tools me-2"></i>HomeFix</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-label="Toggle navigation" title="Toggle navigation menu">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
@@ -95,7 +80,7 @@
             {% for message in messages %}
                 <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
                     {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close alert" title="Close alert"></button>
                 </div>
             {% endfor %}
         </div>
@@ -107,7 +92,7 @@
     </main>
 
     <!-- Footer -->
-    <footer class="text-white" style="background-color: #004080;">
+    <footer class="text-white hf-footer">
 
         <!-- Main Footer Content -->
         <div class="py-5">
@@ -124,13 +109,13 @@
                         
                         <!-- Social Media Links -->
                         <div class="d-flex gap-3 mt-3">
-                            <a href="https://facebook.com/homefixuk" target="_blank" aria-label="Visit our Facebook page" class="text-white" style="background-color: rgba(255, 255, 255, 0.1); width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: all 0.3s ease;">
+                            <a href="https://facebook.com/homefixuk" target="_blank" rel="noopener noreferrer" aria-label="Visit our Facebook page" class="text-white hf-social-link">
                                 <i class="fab fa-facebook-f"></i>
                             </a>
-                            <a href="https://instagram.com/homefixuk" target="_blank" aria-label="Follow us on Instagram" class="text-white" style="background-color: rgba(255, 255, 255, 0.1); width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: all 0.3s ease;">
+                            <a href="https://instagram.com/homefixuk" target="_blank" rel="noopener noreferrer" aria-label="Follow us on Instagram" class="text-white hf-social-link">
                                 <i class="fab fa-instagram"></i>
                             </a>
-                            <a href="https://wa.me/923061642273" target="_blank" aria-label="Contact us on WhatsApp" class="text-white" style="background-color: rgba(255, 255, 255, 0.1); width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: all 0.3s ease;">
+                            <a href="https://wa.me/923061642273" target="_blank" rel="noopener noreferrer" aria-label="Contact us on WhatsApp" class="text-white hf-social-link">
                                 <i class="fab fa-whatsapp"></i>
                             </a>
                         </div>
@@ -176,7 +161,7 @@
         </div>
         
         <!-- Footer Bottom -->
-        <div class="py-3" style="background-color: rgba(0, 0, 0, 0.1);">
+        <div class="py-3 hf-footer-bottom">
             <div class="container">
                 <div class="row align-items-center">
                     <div class="col-md-6 text-center text-md-start">
@@ -195,7 +180,7 @@
     <!-- Bootstrap JS Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Custom JS -->
-    <script src="/static/js/main.js"></script>
+    <script src="{% static 'js/main.js' %}"></script>
     {% block extra_js %}{% endblock %}
 </body>
 </html>

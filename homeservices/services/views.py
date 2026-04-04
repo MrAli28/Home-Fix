@@ -64,7 +64,7 @@ def book_service(request, service_id=None):
                 # Pre-fill email from user account if not provided
                 if not booking.email and request.user.email:
                     booking.email = request.user.email
-            # Provider is not assigned - customer books directly without provider quote stage
+            # Customer books directly without a provider assignment stage.
             booking.provider = None
             booking.status = 'pending'  # Status: pending until admin confirms
             booking.save()
@@ -198,15 +198,6 @@ def rate_booking(request, booking_id):
             booking.rating = review.rating
             booking.feedback = review.comment
             booking.save()
-            
-            # Update provider rating
-            provider = booking.provider
-            if provider:
-                provider_bookings = Booking.objects.filter(provider=provider, rating__isnull=False)
-                avg_rating = provider_bookings.aggregate(models.Avg('rating'))['rating__avg']
-                provider.rating = avg_rating
-                provider.total_jobs = Booking.objects.filter(provider=provider, status='completed').count()
-                provider.save()
             
             messages.success(request, 'Thank you for your review!')
             return redirect('dashboard')

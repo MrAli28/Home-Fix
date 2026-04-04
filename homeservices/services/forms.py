@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import Booking, Provider, Review
+from .models import Booking, Review
 
 class UserRegistrationForm(UserCreationForm):
     """Form for user registration"""
@@ -34,16 +34,6 @@ class BookingForm(forms.ModelForm):
     class Meta:
         model = Booking
         fields = ['service', 'date', 'time', 'phone_number', 'email', 'address', 'postcode', 'notes']
-
-class ProviderRegistrationForm(forms.ModelForm):
-    """Form for registering as a service provider"""
-    class Meta:
-        model = Provider
-        fields = ['service_types', 'experience', 'bio']
-        widgets = {
-            'experience': forms.Textarea(attrs={'rows': 3}),
-            'bio': forms.Textarea(attrs={'rows': 5}),
-        }
 
 class ReviewForm(forms.ModelForm):
     """Form for submitting service reviews"""

@@ -22,9 +22,6 @@
                             <p class="mb-1"><strong>Date:</strong> {{ booking.date|date:"F j, Y" }}</p>
                             <p class="mb-1"><strong>Time:</strong> {{ booking.time|time:"g:i A" }}</p>
                             <p class="mb-1"><strong>Address:</strong> {{ booking.address }}, {{ booking.postcode }}</p>
-                            {% if booking.provider %}
-                            <p class="mb-1"><strong>Provider:</strong> {{ booking.provider.user.get_full_name }}</p>
-                            {% endif %}
                             <p class="mb-0"><strong>Status:</strong> {{ booking.get_status_display }}</p>
                         </div>
                     </div>
