@@ -127,7 +127,7 @@
                 <h1 class="display-4 fw-bold mb-4">Professional Home Services and Property Maintenance in London</h1>
                 <p class="lead mb-4">With 20 years of experience, Homefix offers high-quality, affordable property maintenance and home services throughout London.</p>
                 <div class="d-flex gap-3">
-                    <a href="{% url 'services' %}" class="btn btn-light btn-lg px-4 d-inline-flex align-items-center">
+                    <a href="{% url 'providers_list' %}" class="btn btn-light btn-lg px-4 d-inline-flex align-items-center">
                         Book a Service <i class="bi bi-arrow-right ms-2"></i>
                     </a>
                 </div>
@@ -135,7 +135,7 @@
             <div class="col-lg-6">
                 <div class="booking-form">
                     <h2 class="text-center mb-4">Request a Quote Today</h2>
-                    <form action="{% url 'services' %}" method="get">
+                    <form action="{% url 'providers_list' %}" method="get">
                         <div class="mb-3">
                             <label for="serviceType" class="form-label">Service Type</label>
                             <select class="form-select form-select-lg" id="serviceType" name="service">
@@ -187,28 +187,14 @@
                                 <img src="{% static 'images/plumbing.jpg' %}" class="img-fluid rounded mb-3 service-thumb" alt="{{ service.name }}">
                             {% elif 'electrical' in service.name|lower or 'electric' in service.name|lower %}
                                 <img src="{% static 'images/electrician.jpeg' %}" class="img-fluid rounded mb-3 service-thumb" alt="{{ service.name }}">
-                            {% elif 'bathroom' in service.name|lower or 'tile' in service.name|lower or 'tiling' in service.name|lower %}
-                                <img src="{% static 'images/bathroom&tilling.jpeg' %}" class="img-fluid rounded mb-3 service-thumb" alt="{{ service.name }}">
-                            {% elif 'paint' in service.name|lower or 'painting' in service.name|lower %}
-                                <img src="{% static 'images/painting.jpeg' %}" class="img-fluid rounded mb-3 service-thumb" alt="{{ service.name }}">
-                            {% elif 'wallpaper' in service.name|lower %}
-                                <img src="{% static 'images/wallpaper.jpeg' %}" class="img-fluid rounded mb-3 service-thumb" alt="{{ service.name }}">
-                            {% elif 'floor' in service.name|lower %}
-                                <img src="{% static 'images/flooring.jpeg' %}" class="img-fluid rounded mb-3 service-thumb" alt="{{ service.name }}">
-                            {% elif 'garden' in service.name|lower or 'landscaping' in service.name|lower %}
-                                <img src="{% static 'images/gardening.jpeg' %}" class="img-fluid rounded mb-3 service-thumb" alt="{{ service.name }}">
-                            {% elif 'roof' in service.name|lower %}
-                                <img src="{% static 'images/roofwork&repair.jpeg' %}" class="img-fluid rounded mb-3 service-thumb" alt="{{ service.name }}">
-                            {% elif 'carpent' in service.name|lower or 'wood' in service.name|lower %}
-                                <img src="{% static 'images/carpenter.jpeg' %}" class="img-fluid rounded mb-3 service-thumb" alt="{{ service.name }}">
-                            {% elif 'loft' in service.name|lower or 'conversion' in service.name|lower %}
-                                <img src="{% static 'images/loft conversions.jpeg' %}" class="img-fluid rounded mb-3 service-thumb" alt="{{ service.name }}">
-                            {% elif 'extension' in service.name|lower %}
-                                <img src="{% static 'images/Extensions.jpeg' %}" class="img-fluid rounded mb-3 service-thumb" alt="{{ service.name }}">
-                            {% elif 'renovation' in service.name|lower or 'build' in service.name|lower %}
-                                <img src="{% static 'images/house_re.jpeg' %}" class="img-fluid rounded mb-3 service-thumb" alt="{{ service.name }}">
                             {% elif 'clean' in service.name|lower %}
                                 <img src="{% static 'images/cleaning.jpeg' %}" class="img-fluid rounded mb-3 service-thumb" alt="{{ service.name }}">
+                            {% elif 'garden' in service.name|lower or 'landscaping' in service.name|lower %}
+                                <img src="{% static 'images/gardening.jpeg' %}" class="img-fluid rounded mb-3 service-thumb" alt="{{ service.name }}">
+                            {% elif 'paint' in service.name|lower or 'painting' in service.name|lower %}
+                                <img src="{% static 'images/painting.jpeg' %}" class="img-fluid rounded mb-3 service-thumb" alt="{{ service.name }}">
+                            {% elif 'carpent' in service.name|lower or 'wood' in service.name|lower %}
+                                <img src="{% static 'images/carpenter.jpeg' %}" class="img-fluid rounded mb-3 service-thumb" alt="{{ service.name }}">
                             {% else %}
                                 <img src="{% static 'images/maintenence.jpeg' %}" class="img-fluid rounded mb-3 service-thumb" alt="{{ service.name }}">
                             {% endif %}
@@ -217,8 +203,8 @@
                         <p class="card-text text-center">{{ service.description }}</p>
                         <p class="text-center text-muted">Starting from £{{ service.base_price }}</p>
                     </div>
-                    <div class="card-footer bg-transparent border-0 text-center">
-                        <a href="{% url 'service_detail' service.id %}" class="btn btn-outline-primary">Learn More</a>
+                    <div class="card-footer bg-transparent border-0 text-center pb-4">
+                        <a href="{% url 'service_request' service.id %}" class="btn btn-primary px-4">View Providers</a>
                     </div>
                 </div>
             </div>
@@ -226,128 +212,7 @@
         </div>
     </section>
 
-    <!-- View All Services Section -->
-    <section class="py-5 bg-light rounded">
-        <h3 class="text-center mb-4">All Our Services</h3>
 
-        <!-- First 6 services visible by default -->
-        <div class="row row-cols-1 row-cols-md-3 g-4">
-            <div class="col">
-                <div class="card h-100 border-0 shadow-sm">
-                    <div class="card-body text-center">
-                        <img src="{% static 'images/loft conversions.jpeg' %}" class="img-fluid rounded mb-3 service-thumb-sm" alt="Loft Conversions">
-                        <h5>Loft Conversions</h5>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="card h-100 border-0 shadow-sm">
-                    <div class="card-body text-center">
-                        <img src="{% static 'images/Extensions.jpeg' %}" class="img-fluid rounded mb-3 service-thumb-sm" alt="Extensions">
-                        <h5>Extensions</h5>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="card h-100 border-0 shadow-sm">
-                    <div class="card-body text-center">
-                        <img src="{% static 'images/painting.jpeg' %}" class="img-fluid rounded mb-3 service-thumb-sm" alt="Painting">
-                        <h5>Painting</h5>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="card h-100 border-0 shadow-sm">
-                    <div class="card-body text-center">
-                        <img src="{% static 'images/wallpaper.jpeg' %}" class="img-fluid rounded mb-3 service-thumb-sm" alt="Wallpaper">
-                        <h5>Wallpaper</h5>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="card h-100 border-0 shadow-sm">
-                    <div class="card-body text-center">
-                        <img src="{% static 'images/maintenence.jpeg' %}" class="img-fluid rounded mb-3 service-thumb-sm" alt="Plastering">
-                        <h5>Plastering</h5>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="card h-100 border-0 shadow-sm">
-                    <div class="card-body text-center">
-                        <img src="{% static 'images/bathroom.jpeg' %}" class="img-fluid rounded mb-3 service-thumb-sm" alt="Bathroom Installation">
-                        <h5>Bathroom Installation</h5>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="text-center mt-4">
-            <button id="viewAllBtn" class="btn btn-outline-primary btn-lg">View All Services</button>
-        </div>
-
-        <!-- Remaining services hidden initially -->
-        <div id="allServices" class="mt-4 is-hidden">
-            <div class="row row-cols-1 row-cols-md-4 g-4">
-                <div class="col">
-                    <div class="card h-100 border-0 shadow-sm">
-                        <div class="card-body text-center">
-                            <img src="{% static 'images/bathroom&tilling.jpeg' %}" class="img-fluid rounded mb-3 service-thumb-sm" alt="Tiling Fittings">
-                            <h5>Tiling Fittings</h5>
-                        </div>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="card h-100 border-0 shadow-sm">
-                        <div class="card-body text-center">
-                            <img src="{% static 'images/electrician.jpeg' %}" class="img-fluid rounded mb-3 service-thumb-sm" alt="Electrical Work">
-                            <h5>Electrical Work</h5>
-                        </div>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="card h-100 border-0 shadow-sm">
-                        <div class="card-body text-center">
-                            <img src="{% static 'images/plumbing.jpg' %}" class="img-fluid rounded mb-3 service-thumb-sm" alt="Plumbing">
-                            <h5>Plumbing</h5>
-                        </div>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="card h-100 border-0 shadow-sm">
-                        <div class="card-body text-center">
-                            <img src="{% static 'images/house_re.jpeg' %}" class="img-fluid rounded mb-3 service-thumb-sm" alt="House Renovation">
-                            <h5>House Renovation</h5>
-                        </div>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="card h-100 border-0 shadow-sm">
-                        <div class="card-body text-center">
-                            <img src="{% static 'images/flooring.jpeg' %}" class="img-fluid rounded mb-3 service-thumb-sm" alt="Flooring">
-                            <h5>Flooring</h5>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <script>
-            document.getElementById('viewAllBtn').addEventListener('click', function() {
-                const allServices = document.getElementById('allServices');
-                const button = document.getElementById('viewAllBtn');
-
-                if (allServices.style.display === 'none' || !allServices.style.display) {
-                    allServices.style.display = 'block';
-                    button.textContent = 'Hide Services';
-                    allServices.scrollIntoView({ behavior: 'smooth' });
-                } else {
-                    allServices.style.display = 'none';
-                    button.textContent = 'View All Services';
-                }
-            });
-        </script>
-    </section>
 
     <!-- Why Choose Us Section -->
     <section class="py-5">

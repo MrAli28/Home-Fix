@@ -43,7 +43,7 @@
                         <a class="nav-link" href="{% url 'home' %}">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'services' %}">Services</a>
+                        <a class="nav-link" href="{% url 'providers_list' %}">Services</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'contact' %}">Contact</a>
@@ -59,15 +59,29 @@
                                 <i class="fas fa-user-circle me-1"></i>{{ user.first_name|default:user.username }}
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end">
-                                <li><a class="dropdown-item" href="{% url 'dashboard' %}">Dashboard</a></li>
-                                <li><a class="dropdown-item" href="{% url 'profile' %}">Profile</a></li>
+                                {% if '/provider/' in request.path %}
+                                <!-- On provider pages, only show Profile and Logout -->
+                                <li><a class="dropdown-item" href="{% url 'profile' %}">Profile Settings</a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+                                {% else %}
+                                {% if user.is_superuser or user.is_staff %}
+                                <li><a class="dropdown-item fw-bold text-primary" href="{% url 'admin_dashboard_home' %}"><i class="fas fa-shield-alt me-1"></i> Admin Dashboard</a></li>
+                                {% else %}
+                                <li><a class="dropdown-item" href="{% url 'dashboard' %}">Customer Dashboard</a></li>
+                                <li><a class="dropdown-item" href="{% url 'provider_dashboard' %}">Provider Dashboard</a></li>
+                                {% endif %}
+                                <li><a class="dropdown-item" href="{% url 'profile' %}">Profile Settings</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+                                {% endif %}
                             </ul>
                         </div>
                     {% else %}
                         <a class="nav-link" href="{% url 'login' %}">Login</a>
                         <a class="nav-link btn btn-outline-light ms-2" href="{% url 'register' %}">Sign Up</a>
+                        <a class="nav-link btn btn-warning text-dark fw-bold ms-2" href="{% url 'provider_signup' %}">Join as Pro</a>
+                        <a class="nav-link ms-2" href="{% url 'provider_login' %}" style="color:rgba(255,255,255,0.75); font-size:0.85rem;">Provider Login</a>
                     {% endif %}
                 </div>
             </div>
@@ -125,12 +139,12 @@
                     <div class="col-lg-2 col-md-6">
                         <h5 class="mb-3 fw-bold">Services</h5>
                         <ul class="list-unstyled footer-links">
-                            <li class="mb-2"><a href="{% url 'service_detail' 1 %}" class="text-white text-decoration-none opacity-75 hover-opacity-100">Plumbing</a></li>
-                            <li class="mb-2"><a href="{% url 'service_detail' 2 %}" class="text-white text-decoration-none opacity-75 hover-opacity-100">Electrical</a></li>
-                            <li class="mb-2"><a href="{% url 'service_detail' 3 %}" class="text-white text-decoration-none opacity-75 hover-opacity-100">Painting</a></li>
-                            <li class="mb-2"><a href="{% url 'service_detail' 4 %}" class="text-white text-decoration-none opacity-75 hover-opacity-100">Cleaning</a></li>
-                            <li class="mb-2"><a href="{% url 'service_detail' 5 %}" class="text-white text-decoration-none opacity-75 hover-opacity-100">Gardening</a></li>
-                            <li><a href="{% url 'services' %}" class="text-white text-decoration-none opacity-75 hover-opacity-100">View All</a></li>
+                            <li class="mb-2"><a href="{% url 'providers_list' %}?service=1" class="text-white text-decoration-none opacity-75 hover-opacity-100">Plumbing</a></li>
+                            <li class="mb-2"><a href="{% url 'providers_list' %}?service=2" class="text-white text-decoration-none opacity-75 hover-opacity-100">Electrical</a></li>
+                            <li class="mb-2"><a href="{% url 'providers_list' %}?service=3" class="text-white text-decoration-none opacity-75 hover-opacity-100">Painting</a></li>
+                            <li class="mb-2"><a href="{% url 'providers_list' %}?service=4" class="text-white text-decoration-none opacity-75 hover-opacity-100">Cleaning</a></li>
+                            <li class="mb-2"><a href="{% url 'providers_list' %}?service=5" class="text-white text-decoration-none opacity-75 hover-opacity-100">Gardening</a></li>
+                            <li><a href="{% url 'providers_list' %}" class="text-white text-decoration-none opacity-75 hover-opacity-100">View All</a></li>
                         </ul>
                     </div>
                     
@@ -140,7 +154,7 @@
                         <ul class="list-unstyled footer-links">
                             <li class="mb-2"><a href="{% url 'home' %}" class="text-white text-decoration-none opacity-75 hover-opacity-100">Home</a></li>
                             <li class="mb-2"><a href="{% url 'about' %}" class="text-white text-decoration-none opacity-75 hover-opacity-100">About Us</a></li>
-                            <li class="mb-2"><a href="{% url 'services' %}" class="text-white text-decoration-none opacity-75 hover-opacity-100">Services</a></li>
+                            <li class="mb-2"><a href="{% url 'providers_list' %}" class="text-white text-decoration-none opacity-75 hover-opacity-100">Services</a></li>
                             <li class="mb-2"><a href="{% url 'contact' %}" class="text-white text-decoration-none opacity-75 hover-opacity-100">Contact</a></li>
                             <li class="mb-2"><a href="{% url 'privacy_policy' %}" class="text-white text-decoration-none opacity-75 hover-opacity-100">Privacy Policy</a></li>
                             <li><a href="{% url 'terms_of_service' %}" class="text-white text-decoration-none opacity-75 hover-opacity-100">Terms of Service</a></li>

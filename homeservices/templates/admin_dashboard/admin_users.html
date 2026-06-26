@@ -1,0 +1,76 @@
+{% extends 'admin_dashboard/admin_base.html' %}
+
+{% block title %}Customers - Admin Dashboard{% endblock %}
+{% block hero_title %}Customer Management{% endblock %}
+{% block hero_subtitle %}View and manage all registered customers on the HomeFix platform.{% endblock %}
+
+{% block content %}
+
+<div class="section-card">
+    <div class="section-card-header">
+        <h5><i class="fas fa-users me-2 text-primary"></i>All Customers</h5>
+        <form class="d-flex gap-2" method="get">
+            <input class="form-control form-control-sm rounded-pill px-3" type="search" name="q"
+                   placeholder="Search name, email..." value="{{ search_query }}" style="min-width:220px;">
+            <button class="btn btn-sm btn-primary rounded-pill px-4 fw-bold" type="submit">Search</button>
+            {% if search_query %}
+            <a href="{% url 'admin_manage_users' %}" class="btn btn-sm btn-outline-secondary rounded-pill px-3">Clear</a>
+            {% endif %}
+        </form>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hf mb-0">
+            <thead>
+                <tr>
+                    <th>Customer</th>
+                    <th>Email Address</th>
+                    <th>Joined Date</th>
+                    <th>Total Bookings</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for u in users %}
+                <tr>
+                    <td>
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="rounded-circle text-white fw-bold d-flex align-items-center justify-content-center flex-shrink-0"
+                                 style="width:38px;height:38px;background:#004080;">
+                                {{ u.username|make_list|first|upper }}
+                            </div>
+                            <div>
+                                <div class="fw-bold">{{ u.get_full_name|default:u.username }}</div>
+                                <div class="small text-muted">@{{ u.username }}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="text-muted">{{ u.email }}</td>
+                    <td class="text-muted small">{{ u.date_joined|date:"M d, Y" }}</td>
+                    <td>
+                        <span class="badge rounded-pill fw-bold px-3 py-2" style="background:#e8f0fe; color:#1a73e8;">
+                            {{ u.bookings.count }} bookings
+                        </span>
+                    </td>
+                    <td>
+                        {% if u.is_active %}
+                        <span class="status-badge status-completed">Active</span>
+                        {% else %}
+                        <span class="status-badge status-cancelled">Suspended</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center py-5">
+                        <i class="fas fa-users mb-3 d-block" style="font-size:2.5rem; opacity:.2;"></i>
+                        <span class="text-muted">No customers found.</span>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

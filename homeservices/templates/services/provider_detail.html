@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ provider.user.first_name }} {{ provider.user.last_name }} - HomeFix{% endblock %}
+
+{% block content %}
+<div class="container py-5 mt-4">
+    <div class="row">
+        <!-- Provider Profile Column -->
+        <div class="col-lg-8 mb-4">
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center mb-4">
+                        <i class="bi bi-person-circle display-1 text-primary me-4"></i>
+                        <div>
+                            <h2 class="mb-1">{{ provider.user.first_name }} {{ provider.user.last_name }}</h2>
+                            <div class="text-warning mb-2 fs-5">
+                                <i class="fas fa-star"></i> {{ provider.rating }} <span class="text-muted fs-6">({{ provider.total_jobs }} completed jobs)</span>
+                            </div>
+                            <div>
+                                {% for area in provider.service_areas.all %}
+                                    <span class="badge bg-secondary">{{ area.city }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h4 class="border-bottom pb-2 mb-3">About</h4>
+                    <p class="lead">{{ provider.bio }}</p>
+                    <p><strong>Experience:</strong> {{ provider.experience }}</p>
+                    
+                    <h4 class="border-bottom pb-2 mt-4 mb-3">Services Offered</h4>
+                    <div class="d-flex flex-wrap gap-2 mb-4">
+                        {% for service in provider.service_types.all %}
+                            <span class="badge text-white fs-6 p-2" style="background-color: #004080;">{{ service.name }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Provider Reviews (Placeholder/Mockup for now since Review model is tied to Booking) -->
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4">
+                    <h4 class="border-bottom pb-2 mb-3">Recent Reviews</h4>
+                    <div class="mb-3 border-bottom pb-3">
+                        <div class="text-warning mb-1">
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                        </div>
+                        <p class="mb-1">"Excellent service, very professional and arrived on time. Highly recommended!"</p>
+                        <small class="text-muted">- A verified customer</small>
+                    </div>
+                    <div>
+                        <div class="text-warning mb-1">
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i>
+                        </div>
+                        <p class="mb-1">"Did a great job, very clean and tidy."</p>
+                        <small class="text-muted">- A verified customer</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Booking Action Column -->
+        <div class="col-lg-4">
+            <div class="card shadow border-primary sticky-top" style="top: 100px;">
+                <div class="card-body p-4 text-center">
+                    <h3 class="mb-4">Ready to Book?</h3>
+                    <p class="mb-4">Schedule a service with {{ provider.user.first_name }} today.</p>
+                    <a href="{% url 'book_provider' provider.id %}" class="btn btn-primary btn-lg w-100 mb-3">Book Now</a>
+                    <a href="{% url 'providers_list' %}" class="btn btn-outline-secondary w-100">Back to Search</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

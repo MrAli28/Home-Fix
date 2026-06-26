@@ -28,12 +28,11 @@ class BookingForm(forms.ModelForm):
     phone_number = forms.CharField(max_length=20, required=True)
     email = forms.EmailField(required=True)
     address = forms.CharField(max_length=255, required=True)
-    postcode = forms.CharField(max_length=20, required=True)
     notes = forms.CharField(widget=forms.Textarea(attrs={'rows': 3}), required=True)
     
     class Meta:
         model = Booking
-        fields = ['service', 'date', 'time', 'phone_number', 'email', 'address', 'postcode', 'notes']
+        fields = ['service', 'date', 'time', 'phone_number', 'email', 'address', 'notes']
 
 class ReviewForm(forms.ModelForm):
     """Form for submitting service reviews"""
@@ -44,3 +43,46 @@ class ReviewForm(forms.ModelForm):
             'rating': forms.NumberInput(attrs={'min': 1, 'max': 5}),
             'comment': forms.Textarea(attrs={'rows': 3}),
         }
+
+class ProviderSignupForm(UserCreationForm):
+    """Step 1: Basic account creation for provider"""
+    email = forms.EmailField(required=True)
+    first_name = forms.CharField(max_length=30, required=True)
+    last_name = forms.CharField(max_length=30, required=True)
+
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'username', 'email', 'password1', 'password2']
+
+class ProviderProfileForm(forms.Form):
+    """Step 2: Provider service details"""
+    from .models import Service, ServiceArea
+    phone = forms.CharField(max_length=20, required=True)
+    experience = forms.CharField(max_length=100, required=True, help_text="e.g. 5 years")
+    bio = forms.CharField(widget=forms.Textarea(attrs={'rows': 3}), required=True)
+    service_types = forms.ModelMultipleChoiceField(
+        queryset=Service.objects.all(),
+        widget=forms.CheckboxSelectMultiple,
+        required=True
+    )
+    service_areas = forms.ModelMultipleChoiceField(
+        queryset=ServiceArea.objects.all(),
+        widget=forms.CheckboxSelectMultiple,
+        required=True
+    )
+
+class ProviderUpdateProfileForm(forms.Form):
+    """Form for provider to update their own profile"""
+    phone = forms.CharField(max_length=20, required=True)
+    experience = forms.CharField(max_length=100, required=True)
+    bio = forms.CharField(widget=forms.Textarea(attrs={'rows': 3}), required=True)
+    service_areas = forms.ModelMultipleChoiceField(
+        queryset=None,
+        widget=forms.CheckboxSelectMultiple,
+        required=True
+    )
+
+    def __init__(self, *args, **kwargs):
+        from .models import ServiceArea
+        super().__init__(*args, **kwargs)
+        self.fields['service_areas'].queryset = ServiceArea.objects.all()

@@ -1,0 +1,169 @@
+{% extends 'admin_dashboard/admin_base.html' %}
+
+{% block title %}Providers - Admin Dashboard{% endblock %}
+{% block hero_title %}Provider Management{% endblock %}
+{% block hero_subtitle %}Review pending applications and manage all active service providers.{% endblock %}
+
+{% block content %}
+
+<!-- Pending Alert -->
+{% if pending_providers %}
+<div class="alert border-0 shadow-sm rounded-3 mb-4 d-flex align-items-center justify-content-between flex-wrap gap-3"
+     style="background:#fff3cd; color:#856404;">
+    <div class="d-flex align-items-center gap-3">
+        <i class="fas fa-hourglass-half fs-4"></i>
+        <div><strong>{{ pending_providers.count }}</strong> provider application(s) are waiting for approval.</div>
+    </div>
+    <span class="badge rounded-pill px-3 py-2" style="background:#856404; color:white;">Action Required</span>
+</div>
+{% endif %}
+
+<!-- Search -->
+<form class="d-flex gap-2 mb-4" method="get">
+    <input class="form-control rounded-pill px-4" type="search" name="q"
+           placeholder="Search by name or email..." value="{{ search_query }}" style="max-width:340px;">
+    <button class="btn btn-primary rounded-pill px-4 fw-bold" type="submit">Search</button>
+    {% if search_query %}
+    <a href="{% url 'admin_manage_providers' %}" class="btn btn-outline-secondary rounded-pill px-3">Clear</a>
+    {% endif %}
+</form>
+
+<!-- Pending Providers -->
+<div class="section-card mb-4">
+    <div class="section-card-header">
+        <h5><i class="fas fa-hourglass-half me-2 text-warning"></i>Pending Applications</h5>
+        <span class="badge rounded-pill px-3 py-2" style="background:#fef7e0; color:#f9ab00; font-size:.85rem;">
+            {{ pending_providers.count }} pending
+        </span>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hf mb-0">
+            <thead>
+                <tr>
+                    <th>Applicant</th>
+                    <th>Contact</th>
+                    <th>Services Offered</th>
+                    <th>Areas</th>
+                    <th>Experience</th>
+                    <th class="text-center">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in pending_providers %}
+                <tr>
+                    <td>
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="rounded-circle text-white fw-bold d-flex align-items-center justify-content-center flex-shrink-0"
+                                 style="width:38px;height:38px;background:#f9ab00;color:#1d2a39;">
+                                {{ p.user.first_name|first }}{{ p.user.last_name|first }}
+                            </div>
+                            <div>
+                                <div class="fw-bold">{{ p.user.get_full_name }}</div>
+                                <div class="small text-muted">Applied {{ p.user.date_joined|date:"M d, Y" }}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="small"><i class="fas fa-envelope text-muted me-1"></i>{{ p.user.email }}</div>
+                        <div class="small"><i class="fas fa-phone text-muted me-1"></i>{{ p.phone }}</div>
+                    </td>
+                    <td>
+                        {% for s in p.service_types.all %}
+                        <span class="badge me-1 mb-1 fw-semibold" style="background:#004080; color:white;">{{ s.name }}</span>
+                        {% endfor %}
+                    </td>
+                    <td class="small text-muted">
+                        {% for a in p.service_areas.all %}{{ a.city }}{% if not forloop.last %}, {% endif %}{% endfor %}
+                    </td>
+                    <td class="small text-muted">{{ p.experience }}</td>
+                    <td class="text-center">
+                        <form method="post" action="{% url 'admin_dashboard_approve_provider' p.id %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="approve">
+                            <button class="btn btn-success btn-sm rounded-pill px-3 fw-bold shadow-sm" type="submit">
+                                <i class="fas fa-check me-1"></i> Approve
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center py-5">
+                        <i class="fas fa-clipboard-check mb-3 d-block text-success" style="font-size:2.5rem; opacity:.5;"></i>
+                        <span class="text-muted">All caught up! No pending applications.</span>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Active Providers -->
+<div class="section-card">
+    <div class="section-card-header">
+        <h5><i class="fas fa-user-check me-2 text-success"></i>Active Providers</h5>
+        <span class="badge rounded-pill px-3 py-2" style="background:#e6f4ea; color:#1e8e3e; font-size:.85rem;">
+            {{ active_providers.count }} active
+        </span>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hf mb-0">
+            <thead>
+                <tr>
+                    <th>Provider</th>
+                    <th>Contact</th>
+                    <th>Services</th>
+                    <th>Areas</th>
+                    <th>Rating</th>
+                    <th class="text-center">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in active_providers %}
+                <tr>
+                    <td>
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="rounded-circle text-white fw-bold d-flex align-items-center justify-content-center flex-shrink-0"
+                                 style="width:38px;height:38px;background:#004080;">
+                                {{ p.user.first_name|first }}{{ p.user.last_name|first }}
+                            </div>
+                            <div>
+                                <div class="fw-bold">{{ p.user.get_full_name }}</div>
+                                <div class="small text-muted">{{ p.user.email }}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="small text-muted"><i class="fas fa-phone me-1"></i>{{ p.phone }}</td>
+                    <td>
+                        {% for s in p.service_types.all %}
+                        <span class="badge me-1 mb-1 fw-semibold" style="background:#004080; color:white;">{{ s.name }}</span>
+                        {% endfor %}
+                    </td>
+                    <td class="small text-muted">
+                        {% for a in p.service_areas.all %}{{ a.city }}{% if not forloop.last %}, {% endif %}{% endfor %}
+                    </td>
+                    <td>
+                        <span class="fw-bold"><i class="fas fa-star text-warning me-1"></i>{{ p.rating|default:"N/A" }}</span>
+                        <div class="small text-muted">{{ p.total_jobs }} jobs</div>
+                    </td>
+                    <td class="text-center">
+                        <form method="post" action="{% url 'admin_dashboard_approve_provider' p.id %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="suspend">
+                            <button class="btn btn-outline-danger btn-sm rounded-pill px-3" type="submit"
+                                    onclick="return confirm('Suspend this provider?')">
+                                <i class="fas fa-ban me-1"></i> Suspend
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="6" class="text-center py-5 text-muted">No active providers found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

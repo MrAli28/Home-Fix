@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Profile - HomeFix Provider{% endblock %}
+
+{% block extra_css %}
+<style>
+    .hero-section {
+        background-color: #004080;
+        color: white;
+        padding: 100px 0 140px;
+        position: relative;
+        overflow: hidden;
+    }
+    .wave-divider {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        overflow: hidden;
+        line-height: 0;
+    }
+    .wave-divider svg {
+        position: relative;
+        display: block;
+        width: calc(100% + 1.3px);
+        height: 70px;
+    }
+    .wave-divider .shape-fill { fill: #FFFFFF; }
+    .edit-card { border:none; border-radius:16px; box-shadow:0 15px 40px rgba(0,0,0,0.1); margin-top:0; position:relative; z-index:10; }
+    .form-label { font-weight:600; color:#444; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em; }
+    .area-checks { display:flex; flex-wrap:wrap; gap:10px; }
+    .area-checks .form-check { border:2px solid #dee2e6; border-radius:8px; padding:8px 16px; cursor:pointer; transition:all 0.2s; }
+    .area-checks .form-check:has(input:checked) { border-color:#004080; background:#e8f0fe; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="hero-section text-center">
+    <div class="container">
+        <h1 class="display-5 fw-bold mb-2">Edit Your Profile</h1>
+        <p class="lead mb-0">Update your bio, experience, and service areas.</p>
+    </div>
+    <div class="wave-divider">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+            <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="shape-fill"></path>
+        </svg>
+    </div>
+</div>
+
+<div class="container py-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <div class="card edit-card">
+                <div class="card-body p-4 p-md-5">
+
+                    {% if messages %}
+                    {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} mb-3">{{ message }}</div>
+                    {% endfor %}
+                    {% endif %}
+
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Phone Number</label>
+                                <input type="tel" name="phone" class="form-control py-2" value="{{ form.phone.value|default:'' }}" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Experience</label>
+                                <input type="text" name="experience" class="form-control py-2" value="{{ form.experience.value|default:'' }}" placeholder="e.g. 5 years" required>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label">Bio / About You</label>
+                            <textarea name="bio" class="form-control py-2" rows="4" required>{{ form.bio.value|default:'' }}</textarea>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label d-block mb-2">Service Areas</label>
+                            <div class="area-checks">
+                                {% for choice in form.service_areas %}
+                                <div class="form-check">
+                                    {{ choice.tag }}
+                                    <label class="form-check-label" for="{{ choice.id_for_label }}">{{ choice.choice_label }}</label>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="d-flex gap-3">
+                            <button type="submit" class="btn btn-primary fw-bold py-2 px-4 rounded-pill flex-grow-1">Save Changes</button>
+                            <a href="{% url 'provider_dashboard' %}" class="btn btn-outline-secondary fw-bold py-2 px-4 rounded-pill">Cancel</a>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

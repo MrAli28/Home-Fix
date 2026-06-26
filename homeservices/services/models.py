@@ -16,10 +16,13 @@ class Provider(models.Model):
     """Model for service providers"""
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='provider_profile')
     service_types = models.ManyToManyField(Service)
+    service_areas = models.ManyToManyField('ServiceArea', related_name='providers')
     experience = models.TextField()
     bio = models.TextField()
+    phone = models.CharField(max_length=20, blank=True, null=True)
     rating = models.DecimalField(max_digits=3, decimal_places=2, null=True, blank=True)
     total_jobs = models.IntegerField(default=0)
+    is_approved = models.BooleanField(default=False)
     
     def __str__(self):
         return f"{self.user.first_name} {self.user.last_name}"
@@ -42,7 +45,7 @@ class Booking(models.Model):
     phone_number = models.CharField(max_length=20, blank=True, null=True)
     email = models.EmailField(blank=True, null=True)
     address = models.CharField(max_length=255)
-    postcode = models.CharField(max_length=20)
+    postcode = models.CharField(max_length=20, blank=True, null=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     notes = models.TextField(blank=True, null=True)

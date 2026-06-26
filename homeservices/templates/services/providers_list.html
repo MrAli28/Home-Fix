@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Service Providers - HomeFix{% endblock %}
+
+{% block extra_css %}
+<style>
+    .hero-section {
+        background-color: #004080;
+        color: white;
+        padding: 100px 0 140px;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .wave-divider {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        overflow: hidden;
+        line-height: 0;
+    }
+    
+    .wave-divider svg {
+        position: relative;
+        display: block;
+        width: calc(100% + 1.3px);
+        height: 70px;
+    }
+    
+    .wave-divider .shape-fill {
+        fill: #FFFFFF;
+    }
+
+    .provider-card {
+        transition: transform 0.3s ease;
+        border-radius: 10px;
+        overflow: hidden;
+        border: none;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    .provider-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .service-details-card {
+        margin-top: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="hero-section text-center">
+    <div class="container">
+        {% if service_obj %}
+            <h1 class="display-4 fw-bold mb-3">Available Providers</h1>
+            <p class="lead mb-0">Here are the top professionals for your request.</p>
+        {% else %}
+            <h1 class="display-4 fw-bold mb-3">Find Service Providers</h1>
+            <p class="lead mb-0">Browse and book trusted professionals in your area.</p>
+        {% endif %}
+    </div>
+    <!-- Wave divider -->
+    <div class="wave-divider">
+        <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+            <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="shape-fill"></path>
+        </svg>
+    </div>
+</div>
+
+<div class="container py-4">
+    {% if service_obj %}
+        <div class="card shadow border-0 overflow-hidden service-details-card mb-5">
+            <div class="row g-0">
+                <div class="col-md-4">
+                    {% if 'plumbing' in service_obj.name|lower %}
+                        <img src="{% static 'images/plumbing.jpg' %}" class="img-fluid rounded-start h-100" style="object-fit: cover; min-height: 250px;" alt="{{ service_obj.name }}">
+                    {% elif 'electrical' in service_obj.name|lower or 'electric' in service_obj.name|lower %}
+                        <img src="{% static 'images/electrician.jpeg' %}" class="img-fluid rounded-start h-100" style="object-fit: cover; min-height: 250px;" alt="{{ service_obj.name }}">
+                    {% elif 'clean' in service_obj.name|lower %}
+                        <img src="{% static 'images/cleaning.jpeg' %}" class="img-fluid rounded-start h-100" style="object-fit: cover; min-height: 250px;" alt="{{ service_obj.name }}">
+                    {% elif 'garden' in service_obj.name|lower or 'landscaping' in service_obj.name|lower %}
+                        <img src="{% static 'images/gardening.jpeg' %}" class="img-fluid rounded-start h-100" style="object-fit: cover; min-height: 250px;" alt="{{ service_obj.name }}">
+                    {% elif 'paint' in service_obj.name|lower or 'painting' in service_obj.name|lower %}
+                        <img src="{% static 'images/painting.jpeg' %}" class="img-fluid rounded-start h-100" style="object-fit: cover; min-height: 250px;" alt="{{ service_obj.name }}">
+                    {% elif 'carpent' in service_obj.name|lower or 'wood' in service_obj.name|lower %}
+                        <img src="{% static 'images/carpenter.jpeg' %}" class="img-fluid rounded-start h-100" style="object-fit: cover; min-height: 250px;" alt="{{ service_obj.name }}">
+                    {% else %}
+                        <img src="{% static 'images/maintenence.jpeg' %}" class="img-fluid rounded-start h-100" style="object-fit: cover; min-height: 250px;" alt="{{ service_obj.name }}">
+                    {% endif %}
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body p-4 d-flex flex-column h-100 justify-content-center">
+                        <h2 class="card-title text-primary fw-bold">{{ service_obj.name }}</h2>
+                        <p class="card-text lead text-muted">{{ service_obj.description }}</p>
+                        <hr>
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <div>
+                                {% if selected_location %}
+                                    <span class="badge bg-primary fs-6 me-2 p-2"><i class="bi bi-geo-alt me-1"></i> {{ selected_location }}</span>
+                                {% endif %}
+                                {% if selected_date %}
+                                    <span class="badge bg-secondary fs-6 me-2 p-2"><i class="bi bi-calendar me-1"></i> {{ selected_date }}</span>
+                                {% endif %}
+                                {% if selected_time %}
+                                    <span class="badge bg-secondary fs-6 p-2"><i class="bi bi-clock me-1"></i> {{ selected_time }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <h3 class="mb-5 text-center fw-bold">Top Available Providers Near You</h3>
+    {% endif %}
+
+    <!-- Provider Listing -->
+    <div class="row">
+        {% if providers %}
+            {% for provider in providers %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card provider-card h-100">
+                    <div class="card-body text-center">
+                        <div class="mb-3">
+                            <i class="bi bi-person-circle display-1 text-primary"></i>
+                        </div>
+                        <h4 class="card-title">{{ provider.user.first_name }} {{ provider.user.last_name }}</h4>
+                        <div class="text-warning mb-2">
+                            <i class="fas fa-star"></i> {{ provider.rating }} ({{ provider.total_jobs }} jobs)
+                        </div>
+                        <div class="mb-3">
+                            {% for area in provider.service_areas.all %}
+                                <span class="badge bg-secondary">{{ area.city }}</span>
+                            {% endfor %}
+                        </div>
+                        <p class="card-text text-muted">{{ provider.bio|truncatewords:15 }}</p>
+                        
+                        <div class="mt-3">
+                            <strong>Offers:</strong><br>
+                            {% for service in provider.service_types.all %}
+                                <span class="badge text-white" style="background-color: #004080;">{{ service.name }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="card-footer bg-white border-top-0 p-3">
+                        <div class="d-grid gap-2">
+                            <a href="{% url 'provider_detail' provider.id %}" class="btn btn-outline-primary">View Profile</a>
+                            <a href="{% url 'book_provider' provider.id %}?location={{ selected_location }}{% if selected_service %}&service={{ selected_service }}{% endif %}" class="btn btn-primary">Book Now</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12 text-center py-5">
+                <h3>No providers found matching your criteria.</h3>
+                <p>Try adjusting your search filters.</p>
+                <a href="{% url 'providers_list' %}" class="btn btn-outline-primary mt-3">Clear Filters</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block title %}Application Pending - HomeFix{% endblock %}
+
+{% block extra_css %}
+<style>
+    .hero-section {
+        background-color: #004080;
+        color: white;
+        padding: 100px 0 140px;
+        position: relative;
+        overflow: hidden;
+    }
+    .wave-divider {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        overflow: hidden;
+        line-height: 0;
+    }
+    .wave-divider svg {
+        position: relative;
+        display: block;
+        width: calc(100% + 1.3px);
+        height: 70px;
+    }
+    .wave-divider .shape-fill { fill: #FFFFFF; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="hero-section text-center">
+    <div class="container">
+        <i class="bi bi-hourglass-split mb-3" style="font-size: 3rem; opacity: 0.8;"></i>
+        <h1 class="display-4 fw-bold mb-3">Application Under Review</h1>
+        <p class="lead mb-0">Your application has been submitted successfully. Our team will review it and notify you via email once approved.</p>
+    </div>
+    <!-- Wave divider -->
+    <div class="wave-divider">
+        <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+            <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="shape-fill"></path>
+        </svg>
+    </div>
+</div>
+
+<div class="container py-5 text-center mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm rounded-4 p-4 mt-2">
+                <h5 class="fw-bold mb-4">What happens next?</h5>
+                <div class="d-flex align-items-start mb-3 text-start">
+                    <span class="badge rounded-pill me-3 px-3 py-2" style="background:#004080;">1</span>
+                    <p class="mb-0">Our admin team reviews your application and service details.</p>
+                </div>
+                <div class="d-flex align-items-start mb-3 text-start">
+                    <span class="badge rounded-pill me-3 px-3 py-2" style="background:#004080;">2</span>
+                    <p class="mb-0">You receive an approval email at your registered address.</p>
+                </div>
+                <div class="d-flex align-items-start text-start">
+                    <span class="badge rounded-pill me-3 px-3 py-2" style="background:#004080;">3</span>
+                    <p class="mb-0">Log in and access your Provider Dashboard to manage bookings.</p>
+                </div>
+            </div>
+            <a href="{% url 'home' %}" class="btn btn-outline-primary mt-4 px-5 py-2 rounded-pill fw-bold">Back to Home</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

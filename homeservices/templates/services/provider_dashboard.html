@@ -1,0 +1,233 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Provider Dashboard - HomeFix{% endblock %}
+
+{% block extra_css %}
+<style>
+    .hero-section {
+        background-color: #004080;
+        color: white;
+        padding: 100px 0 140px;
+        position: relative;
+        overflow: hidden;
+    }
+    .wave-divider {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        overflow: hidden;
+        line-height: 0;
+    }
+    .wave-divider svg {
+        position: relative;
+        display: block;
+        width: calc(100% + 1.3px);
+        height: 70px;
+    }
+    .wave-divider .shape-fill { fill: #f8f9fa; }
+
+    .stat-card {
+        border: none; border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        transition: transform 0.2s;
+    }
+    .stat-card:hover { transform: translateY(-3px); }
+    .stat-icon {
+        width: 52px; height: 52px; border-radius: 12px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.4rem;
+    }
+    .status-badge { font-size: 0.78rem; padding: 5px 10px; border-radius: 20px; font-weight: 600; }
+    .status-pending    { background: #fff3cd; color: #856404; }
+    .status-confirmed  { background: #cff4fc; color: #055160; }
+    .status-in_progress{ background: #d1ecf1; color: #0c5460; }
+    .status-completed  { background: #d4edda; color: #155724; }
+    .status-cancelled  { background: #f8d7da; color: #721c24; }
+
+    .section-card { border: none; border-radius: 14px; box-shadow: 0 4px 18px rgba(0,0,0,0.07); }
+    .profile-avatar {
+        width: 80px; height: 80px; border-radius: 50%;
+        background: #004080; display: flex; align-items: center;
+        justify-content: center; font-size: 2rem; color: white; font-weight: 700;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero -->
+<div class="hero-section">
+    <div class="container d-flex align-items-center justify-content-between flex-wrap gap-3">
+        <div>
+            <h1 class="display-4 fw-bold mb-1">Welcome, {{ provider.user.first_name }}! 👋</h1>
+            <p class="lead mb-0">Manage your bookings and profile from one place.</p>
+        </div>
+        <a href="{% url 'provider_update_profile' %}" class="btn btn-light fw-bold px-4 py-2 rounded-pill mt-2">
+            <i class="bi bi-pencil-square me-2"></i>Edit Profile
+        </a>
+    </div>
+    <div class="wave-divider">
+        <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+            <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="shape-fill"></path>
+        </svg>
+    </div>
+</div>
+
+<div class="bg-light" style="min-height: 80vh; padding-top: 40px; padding-bottom: 60px;">
+<div class="container">
+
+    <!-- Stats Row -->
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3">
+            <div class="card stat-card p-3 h-100">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="stat-icon" style="background:#e8f0fe;"><i class="bi bi-calendar-check text-primary"></i></div>
+                    <div>
+                        <div class="fw-bold fs-4">{{ bookings.count }}</div>
+                        <div class="text-muted small">Total Bookings</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card stat-card p-3 h-100">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="stat-icon" style="background:#fff8e1;"><i class="bi bi-hourglass-split text-warning"></i></div>
+                    <div>
+                        <div class="fw-bold fs-4">{{ bookings|length }}</div>
+                        <div class="text-muted small">Pending</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card stat-card p-3 h-100">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="stat-icon" style="background:#e8f5e9;"><i class="bi bi-check-circle text-success"></i></div>
+                    <div>
+                        <div class="fw-bold fs-4">{{ provider.total_jobs }}</div>
+                        <div class="text-muted small">Completed</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card stat-card p-3 h-100">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="stat-icon" style="background:#fce4ec;"><i class="bi bi-star-fill text-danger"></i></div>
+                    <div>
+                        <div class="fw-bold fs-4">{{ provider.rating|default:"N/A" }}</div>
+                        <div class="text-muted small">Rating</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Profile Summary -->
+        <div class="col-lg-4">
+            <div class="card section-card p-4 h-100">
+                <h5 class="fw-bold mb-4">My Profile</h5>
+                <div class="d-flex align-items-center gap-3 mb-4">
+                    <div class="profile-avatar">{{ provider.user.first_name|first }}{{ provider.user.last_name|first }}</div>
+                    <div>
+                        <div class="fw-bold fs-5">{{ provider.user.first_name }} {{ provider.user.last_name }}</div>
+                        <div class="text-muted small">{{ provider.user.email }}</div>
+                        {% if provider.phone %}<div class="text-muted small"><i class="bi bi-telephone me-1"></i>{{ provider.phone }}</div>{% endif %}
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <div class="text-muted small text-uppercase fw-bold mb-1">Experience</div>
+                    <div>{{ provider.experience }}</div>
+                </div>
+                <div class="mb-3">
+                    <div class="text-muted small text-uppercase fw-bold mb-1">Bio</div>
+                    <div class="small text-muted">{{ provider.bio }}</div>
+                </div>
+                <div class="mb-3">
+                    <div class="text-muted small text-uppercase fw-bold mb-2">Services Offered</div>
+                    <div class="d-flex flex-wrap gap-1">
+                        {% for s in provider.service_types.all %}
+                        <span class="badge text-white" style="background-color:#004080;">{{ s.name }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div>
+                    <div class="text-muted small text-uppercase fw-bold mb-2">Service Areas</div>
+                    <div class="d-flex flex-wrap gap-1">
+                        {% for a in provider.service_areas.all %}
+                        <span class="badge bg-secondary">{{ a.city }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <a href="{% url 'provider_update_profile' %}" class="btn btn-outline-primary w-100 rounded-pill fw-bold">
+                        <i class="bi bi-pencil me-2"></i>Edit Profile
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bookings Table -->
+        <div class="col-lg-8">
+            <div class="card section-card p-4">
+                <h5 class="fw-bold mb-4">My Bookings</h5>
+                {% if bookings %}
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>#</th>
+                                <th>Service</th>
+                                <th>Customer</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Update</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for booking in bookings %}
+                            <tr>
+                                <td class="text-muted small">{{ booking.id }}</td>
+                                <td class="fw-bold">{{ booking.service.name }}</td>
+                                <td>
+                                    {% if booking.customer %}{{ booking.customer.get_full_name|default:booking.customer.username }}{% else %}<span class="text-muted">Guest</span>{% endif %}
+                                </td>
+                                <td class="small">{{ booking.date }}</td>
+                                <td>
+                                    <span class="status-badge status-{{ booking.status }}">
+                                        {{ booking.get_status_display }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <form method="post" action="{% url 'provider_update_booking' booking.id %}" class="d-flex gap-1">
+                                        {% csrf_token %}
+                                        <select name="status" class="form-select form-select-sm" style="width:auto;">
+                                            {% for val, label in booking.STATUS_CHOICES %}
+                                            <option value="{{ val }}" {% if booking.status == val %}selected{% endif %}>{{ label }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <button type="submit" class="btn btn-sm btn-primary px-2">
+                                            <i class="bi bi-check-lg"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-5 text-muted">
+                    <i class="bi bi-calendar-x display-3 mb-3 d-block opacity-25"></i>
+                    <p>No bookings yet. Once customers book you, they'll appear here.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}

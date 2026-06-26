@@ -1,0 +1,204 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Join as a Provider - HomeFix{% endblock %}
+
+{% block extra_css %}
+<style>
+    .hero-section {
+        background-color: #004080;
+        color: white;
+        padding: 100px 0 140px;
+        position: relative;
+        overflow: hidden;
+    }
+    .wave-divider {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        overflow: hidden;
+        line-height: 0;
+    }
+    .wave-divider svg {
+        position: relative;
+        display: block;
+        width: calc(100% + 1.3px);
+        height: 70px;
+    }
+    .wave-divider .shape-fill { fill: #FFFFFF; }
+
+    .signup-card {
+        border: none;
+        border-radius: 16px;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+        margin-top: 0;
+        position: relative;
+        z-index: 10;
+    }
+    .step-indicator { display: flex; justify-content: center; gap: 12px; margin-bottom: 30px; }
+    .step-dot {
+        width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center;
+        justify-content: center; font-weight: 700; font-size: 0.9rem;
+        border: 2px solid #004080; color: #004080; background: white;
+        transition: all 0.3s;
+    }
+    .step-dot.active { background: #004080; color: white; }
+    .step-dot.done { background: #28a745; border-color: #28a745; color: white; }
+    .step-line { flex: 1; height: 2px; background: #dee2e6; align-self: center; max-width: 60px; }
+    .form-label { font-weight: 600; color: #444; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    .form-control, .form-select { padding: 0.6rem 0.9rem; border-radius: 8px; }
+    .form-check-label { font-weight: 500; }
+    .service-checks, .area-checks { display: flex; flex-wrap: wrap; gap: 10px; }
+    .service-checks .form-check, .area-checks .form-check {
+        border: 2px solid #dee2e6; border-radius: 8px; padding: 8px 16px;
+        cursor: pointer; transition: all 0.2s;
+    }
+    .service-checks .form-check:has(input:checked),
+    .area-checks .form-check:has(input:checked) {
+        border-color: #004080; background: #e8f0fe;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="hero-section text-center">
+    <div class="container">
+        <h1 class="display-4 fw-bold mb-3">Become a Provider</h1>
+        <p class="lead mb-0">Join our network of trusted professionals and grow your business.</p>
+    </div>
+    <div class="wave-divider">
+        <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+            <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="shape-fill"></path>
+        </svg>
+    </div>
+</div>
+
+<div class="container py-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <div class="card signup-card">
+                <div class="card-body p-4 p-md-5">
+
+                    <!-- Step Indicator -->
+                    <div class="step-indicator">
+                        <div class="step-dot {% if step >= 1 %}{% if step > 1 %}done{% else %}active{% endif %}{% endif %}">
+                            {% if step > 1 %}<i class="bi bi-check"></i>{% else %}1{% endif %}
+                        </div>
+                        <div class="step-line"></div>
+                        <div class="step-dot {% if step == 2 %}active{% endif %}">2</div>
+                    </div>
+
+                    {% if step == 1 %}
+                    <h4 class="fw-bold text-center mb-1">Create Your Account</h4>
+                    <p class="text-muted text-center small mb-4">Step 1 of 2 — Basic account details</p>
+
+                    {% if messages %}
+                        {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} mb-3">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="step" value="1">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">First Name</label>
+                                <input type="text" name="first_name" class="form-control" value="{{ user_form.first_name.value|default:'' }}" required>
+                                {% if user_form.first_name.errors %}<div class="text-danger small mt-1">{{ user_form.first_name.errors|join:', ' }}</div>{% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Last Name</label>
+                                <input type="text" name="last_name" class="form-control" value="{{ user_form.last_name.value|default:'' }}" required>
+                                {% if user_form.last_name.errors %}<div class="text-danger small mt-1">{{ user_form.last_name.errors|join:', ' }}</div>{% endif %}
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Username</label>
+                            <input type="text" name="username" class="form-control" value="{{ user_form.username.value|default:'' }}" required>
+                            {% if user_form.username.errors %}<div class="text-danger small mt-1">{{ user_form.username.errors|join:', ' }}</div>{% endif %}
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email Address</label>
+                            <input type="email" name="email" class="form-control" value="{{ user_form.email.value|default:'' }}" required>
+                            {% if user_form.email.errors %}<div class="text-danger small mt-1">{{ user_form.email.errors|join:', ' }}</div>{% endif %}
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Password</label>
+                                <input type="password" name="password1" class="form-control" required>
+                                {% if user_form.password1.errors %}<div class="text-danger small mt-1">{{ user_form.password1.errors|join:', ' }}</div>{% endif %}
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <label class="form-label">Confirm Password</label>
+                                <input type="password" name="password2" class="form-control" required>
+                                {% if user_form.password2.errors %}<div class="text-danger small mt-1">{{ user_form.password2.errors|join:', ' }}</div>{% endif %}
+                            </div>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg py-3 fw-bold">Continue to Service Details →</button>
+                        </div>
+                    </form>
+
+                    {% elif step == 2 %}
+                    <h4 class="fw-bold text-center mb-1">Your Service Details</h4>
+                    <p class="text-muted text-center small mb-4">Step 2 of 2 — Tell us what you offer</p>
+
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="step" value="2">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Phone Number</label>
+                                <input type="tel" name="phone" class="form-control" required>
+                                {% if profile_form.phone.errors %}<div class="text-danger small mt-1">{{ profile_form.phone.errors|join:', ' }}</div>{% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Experience</label>
+                                <input type="text" name="experience" class="form-control" placeholder="e.g. 5 years" required>
+                                {% if profile_form.experience.errors %}<div class="text-danger small mt-1">{{ profile_form.experience.errors|join:', ' }}</div>{% endif %}
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Bio / About You</label>
+                            <textarea name="bio" class="form-control" rows="3" placeholder="Describe your skills and background..." required></textarea>
+                            {% if profile_form.bio.errors %}<div class="text-danger small mt-1">{{ profile_form.bio.errors|join:', ' }}</div>{% endif %}
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label">Services You Offer</label>
+                            {% if profile_form.service_types.errors %}<div class="text-danger small mb-2">{{ profile_form.service_types.errors|join:', ' }}</div>{% endif %}
+                            <div class="service-checks">
+                                {% for choice in profile_form.service_types %}
+                                <div class="form-check">
+                                    {{ choice.tag }}
+                                    <label class="form-check-label" for="{{ choice.id_for_label }}">{{ choice.choice_label }}</label>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label">Areas You Cover</label>
+                            {% if profile_form.service_areas.errors %}<div class="text-danger small mb-2">{{ profile_form.service_areas.errors|join:', ' }}</div>{% endif %}
+                            <div class="area-checks">
+                                {% for choice in profile_form.service_areas %}
+                                <div class="form-check">
+                                    {{ choice.tag }}
+                                    <label class="form-check-label" for="{{ choice.id_for_label }}">{{ choice.choice_label }}</label>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg py-3 fw-bold">Submit Application ✓</button>
+                        </div>
+                    </form>
+                    {% endif %}
+
+                </div>
+            </div>
+            <p class="text-center text-muted mt-3 small">Already registered as a provider? <a href="{% url 'provider_login' %}" class="fw-bold" style="color:#004080;">Login here</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}

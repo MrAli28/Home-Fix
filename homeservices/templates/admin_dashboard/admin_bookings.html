@@ -1,0 +1,101 @@
+{% extends 'admin_dashboard/admin_base.html' %}
+
+{% block title %}Bookings - Admin Dashboard{% endblock %}
+{% block hero_title %}Booking Management{% endblock %}
+{% block hero_subtitle %}Track, filter, and update every service booking on the platform.{% endblock %}
+
+{% block content %}
+
+<!-- Filters -->
+<form class="section-card p-3 mb-4 d-flex flex-wrap gap-2 align-items-center" method="get">
+    <input class="form-control rounded-pill px-3" type="search" name="q"
+           placeholder="Search customer, provider, service..." value="{{ search_query }}"
+           style="flex:1; min-width:200px;">
+    <select name="status" class="form-select rounded-pill px-3" style="width:auto;">
+        <option value="">All Statuses</option>
+        {% for val, label in status_choices %}
+        <option value="{{ val }}" {% if current_status == val %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+    </select>
+    <button class="btn btn-primary rounded-pill px-4 fw-bold" type="submit">Filter</button>
+    {% if search_query or current_status %}
+    <a href="{% url 'admin_manage_bookings' %}" class="btn btn-outline-secondary rounded-pill px-4">Clear</a>
+    {% endif %}
+</form>
+
+<!-- Bookings Table -->
+<div class="section-card">
+    <div class="section-card-header">
+        <h5><i class="fas fa-calendar-alt me-2 text-primary"></i>All Bookings
+            <span class="badge rounded-pill px-3 ms-2" style="background:#e8f0fe; color:#1a73e8; font-size:.8rem;">
+                {{ bookings.count }} found
+            </span>
+        </h5>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hf mb-0">
+            <thead>
+                <tr>
+                    <th>#ID & Service</th>
+                    <th>Customer</th>
+                    <th>Provider</th>
+                    <th>Schedule</th>
+                    <th>Address</th>
+                    <th>Status</th>
+                    <th class="text-end">Update</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for b in bookings %}
+                <tr>
+                    <td>
+                        <div class="fw-bold">#{{ b.id }}</div>
+                        <div class="small text-muted">{{ b.service.name }}</div>
+                    </td>
+                    <td>
+                        <div class="fw-bold">{{ b.customer.get_full_name|default:b.customer.username|default:"Guest" }}</div>
+                        <div class="small text-muted">{{ b.phone_number }}</div>
+                    </td>
+                    <td>
+                        {% if b.provider %}
+                        <div class="fw-bold" style="color:#004080;">{{ b.provider.user.get_full_name }}</div>
+                        <div class="small text-muted">{{ b.provider.phone }}</div>
+                        {% else %}
+                        <span class="status-badge status-cancelled">Unassigned</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="fw-bold">{{ b.date|date:"M d, Y" }}</div>
+                        <div class="small text-muted">{{ b.time|time:"g:i A" }}</div>
+                    </td>
+                    <td class="small text-muted">{{ b.address }}<br>{{ b.postcode }}</td>
+                    <td>
+                        <span class="status-badge status-{{ b.status }}">{{ b.get_status_display }}</span>
+                    </td>
+                    <td class="text-end">
+                        <form method="post" action="{% url 'admin_dashboard_update_booking' b.id %}"
+                              class="d-flex align-items-center justify-content-end gap-1">
+                            {% csrf_token %}
+                            <select name="status" class="form-select form-select-sm rounded-pill" style="width:130px;">
+                                {% for val, label in status_choices %}
+                                <option value="{{ val }}" {% if b.status == val %}selected{% endif %}>{{ label }}</option>
+                                {% endfor %}
+                            </select>
+                            <button type="submit" class="btn btn-sm btn-primary rounded-pill px-2 fw-bold">✓</button>
+                        </form>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="text-center py-5">
+                        <i class="fas fa-calendar-times mb-3 d-block" style="font-size:2.5rem; opacity:.2;"></i>
+                        <span class="text-muted">No bookings found matching your filter.</span>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

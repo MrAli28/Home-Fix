@@ -1,25 +1,86 @@
 {% extends 'base.html' %}
 
-{% block title %}Book a Service{% endblock %}
+{% block title %}Book a Service - HomeFix{% endblock %}
+
+{% block extra_css %}
+<style>
+    .hero-section {
+        background-color: #004080;
+        color: white;
+        padding: 100px 0 140px;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .wave-divider {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        overflow: hidden;
+        line-height: 0;
+    }
+    
+    .wave-divider svg {
+        position: relative;
+        display: block;
+        width: calc(100% + 1.3px);
+        height: 70px;
+    }
+    
+    .wave-divider .shape-fill {
+        fill: #FFFFFF;
+    }
+
+    .booking-card {
+        margin-top: 0;
+        border-radius: 15px;
+        overflow: hidden;
+        border: none;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="container py-5">
+<div class="hero-section text-center">
+    <div class="container">
+        <h1 class="display-4 fw-bold mb-3">
+            {% if provider %}Book {{ provider.user.first_name }} {{ provider.user.last_name }}{% elif service %}Book {{ service.name }} Service{% else %}Request a Quote{% endif %}
+        </h1>
+        <p class="lead mb-0">Fill in the details below to confirm your booking.</p>
+    </div>
+    <!-- Wave divider -->
+    <div class="wave-divider">
+        <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+            <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="shape-fill"></path>
+        </svg>
+    </div>
+</div>
+
+<div class="container py-5 mb-5">
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <div class="card shadow">
-                <div class="card-header bg-primary text-white">
-                    <h4 class="mb-0">{% if service %}Book {{ service.name }} Service{% else %}Request a Quote{% endif %}</h4>
-                </div>
-                <div class="card-body">
+            <div class="card booking-card bg-white">
+                <div class="card-body p-4 p-md-5">
                     <form method="post">
                         {% csrf_token %}
-                        <div class="mb-3">
-                            <label for="service" class="form-label">Service</label>
+                        {% if provider %}
+                        <div class="d-flex align-items-center mb-4 p-3 rounded text-white" style="background-color: #004080;">
+                            <i class="bi bi-person-circle fs-3 me-3"></i>
+                            <div>
+                                <strong>Provider:</strong> {{ provider.user.first_name }} {{ provider.user.last_name }}<br>
+                                <span class="text-warning"><i class="fas fa-star"></i> {{ provider.rating }}</span>
+                            </div>
+                        </div>
+                        {% endif %}
+                        <div class="mb-4">
+                            <label for="service" class="form-label fw-bold text-muted small text-uppercase">Service</label>
                             {% if service %}
-                                <input type="text" class="form-control" id="service" value="{{ service.name }}" disabled>
+                                <input type="text" class="form-control bg-light py-2" id="service_display" value="{{ service.name }}" disabled>
                                 <input type="hidden" name="service" value="{{ service.id }}">
                             {% else %}
-                                <select name="service" id="service" class="form-control" required>
+                                <select name="service" id="service" class="form-select py-2" required>
                                     <option value="">Select a service</option>
                                     {% for service_option in services %}
                                         <option value="{{ service_option.id }}">{{ service_option.name }}</option>
@@ -27,36 +88,36 @@
                                 </select>
                             {% endif %}
                         </div>
-                        <div class="mb-3">
-                            <label for="phone_number" class="form-label">Phone Number</label>
-                            <input type="tel" class="form-control" id="phone_number" name="phone_number" required>
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <label for="phone_number" class="form-label fw-bold text-muted small text-uppercase">Phone Number</label>
+                                <input type="tel" class="form-control py-2" id="phone_number" name="phone_number" required>
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <label for="email" class="form-label fw-bold text-muted small text-uppercase">Email Address</label>
+                                <input type="email" class="form-control py-2" id="email" name="email" value="{% if form.email.value %}{{ form.email.value }}{% endif %}" required>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email Address</label>
-                            <input type="email" class="form-control" id="email" name="email" required>
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <label for="date" class="form-label fw-bold text-muted small text-uppercase">Preferred Date</label>
+                                <input type="date" class="form-control py-2" id="date" name="date" required>
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <label for="time" class="form-label fw-bold text-muted small text-uppercase">Preferred Time</label>
+                                <input type="time" class="form-control py-2" id="time" name="time" required>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="date" class="form-label">Preferred Date</label>
-                            <input type="date" class="form-control" id="date" name="date" required>
+                        <div class="mb-4">
+                            <label for="address" class="form-label fw-bold text-muted small text-uppercase">Address</label>
+                            <textarea class="form-control py-2" id="address" name="address" rows="2" required></textarea>
                         </div>
-                        <div class="mb-3">
-                            <label for="time" class="form-label">Preferred Time</label>
-                            <input type="time" class="form-control" id="time" name="time" required>
+                        <div class="mb-4">
+                            <label for="notes" class="form-label fw-bold text-muted small text-uppercase">Additional Notes</label>
+                            <textarea class="form-control py-2" id="notes" name="notes" rows="3"></textarea>
                         </div>
-                        <div class="mb-3">
-                            <label for="address" class="form-label">Address</label>
-                            <textarea class="form-control" id="address" name="address" rows="3" required></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label for="postcode" class="form-label">Postcode</label>
-                            <input type="text" class="form-control" id="postcode" name="postcode" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="notes" class="form-label">Additional Notes</label>
-                            <textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
-                        </div>
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary">Request Quote</button>
+                        <div class="d-grid gap-2 mt-2">
+                            <button type="submit" class="btn btn-primary btn-lg py-3 fw-bold">Confirm Booking</button>
                         </div>
                     </form>
                 </div>

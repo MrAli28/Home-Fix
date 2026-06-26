@@ -1,12 +1,53 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, authenticate
+from django.contrib.auth.models import User
 from django.contrib import messages
 from django.http import JsonResponse
 from django.db.models import Q
 from django.db.utils import OperationalError, ProgrammingError
-from .models import Service, Booking, ServiceArea, Review
+from django.contrib.auth.views import LoginView
+from .models import Service, Booking, ServiceArea, Review, Provider
 from .forms import BookingForm, UserRegistrationForm, UserProfileForm, ReviewForm
+
+
+class SmartLoginView(LoginView):
+    """Custom login view that redirects admin to admin dashboard, others to their dashboard."""
+    template_name = 'services/login.html'
+
+    def get_success_url(self):
+        user = self.request.user
+        if user.is_staff or user.is_superuser:
+            return '/admin-dashboard/'
+        # Check if the user is a provider
+        try:
+            if user.provider_profile and user.provider_profile.is_approved:
+                return '/provider/dashboard/'
+        except Exception:
+            pass
+        return '/dashboard/'
+
+
+class ProviderLoginView(LoginView):
+    """Dedicated login view for providers — always redirects to provider dashboard."""
+    template_name = 'services/provider_login.html'
+
+    def get_success_url(self):
+        user = self.request.user
+        # Admin trying to login via provider page — send to admin dashboard
+        if user.is_staff or user.is_superuser:
+            return '/admin-dashboard/'
+        # Check provider profile
+        try:
+            provider = user.provider_profile
+            if provider.is_approved:
+                return '/provider/dashboard/'
+            else:
+                return '/provider/pending/'
+        except Exception:
+            pass
+        # Not a provider — send to customer dashboard
+        return '/dashboard/'
 
 
 def _safe_services_queryset():
@@ -43,16 +84,48 @@ def terms_of_service(request):
     """Terms of service page view"""
     return render(request, 'services/terms_of_service.html')
 
-def services_list(request):
-    """Services listing page"""
-    services = _safe_services_queryset()
-    return render(request, 'services/services.html', {'services': services})
-
-def service_detail(request, service_id):
-    """Service detail page"""
+def service_request(request, service_id):
+    """New view for requesting a service and picking area/time"""
     service = get_object_or_404(Service, id=service_id)
-    return render(request, 'services/service_detail.html', {
+    service_areas = _safe_service_areas_queryset()
+    return render(request, 'services/service_request.html', {
         'service': service,
+        'service_areas': service_areas,
+    })
+
+def providers_list(request):
+    """Providers listing page based on location and service"""
+    service_id = request.GET.get('service')
+    location = request.GET.get('location')
+    time = request.GET.get('time')
+    date = request.GET.get('date')
+    
+    providers = Provider.objects.all().prefetch_related('user', 'service_types', 'service_areas')
+    service_obj = None
+    
+    if service_id:
+        providers = providers.filter(service_types__id=service_id)
+        service_obj = get_object_or_404(Service, id=service_id)
+    if location:
+        providers = providers.filter(service_areas__city__iexact=location)
+        
+    # Order by rating and total_jobs, and limit to top 3
+    providers = providers.order_by('-rating', '-total_jobs')[:3]
+        
+    return render(request, 'services/providers_list.html', {
+        'providers': providers,
+        'selected_service': service_id,
+        'selected_location': location,
+        'selected_time': time,
+        'selected_date': date,
+        'service_obj': service_obj,
+    })
+
+def provider_detail(request, provider_id):
+    """Provider detail page"""
+    provider = get_object_or_404(Provider, id=provider_id)
+    return render(request, 'services/provider_detail.html', {
+        'provider': provider,
     })
 
 def contact(request):
@@ -60,12 +133,29 @@ def contact(request):
     services = _safe_services_queryset()  # Pass services for the dropdown in contact form
     return render(request, 'services/contact.html', {'services': services})
 
-def book_service(request, service_id=None):
+def book_service(request, service_id=None, provider_id=None):
     """Booking form page"""
     service = None
+    provider = None
+    
+    if not service_id and request.GET.get('service'):
+        service_id = request.GET.get('service')
+
     if service_id:
         service = get_object_or_404(Service, id=service_id)
+        
+    # provider_id could be passed as query param or URL param.
+    # Let's also check GET params if not in URL
+    if not provider_id and request.GET.get('provider'):
+        provider_id = request.GET.get('provider')
+        
+    if provider_id:
+        provider = get_object_or_404(Provider, id=provider_id)
     
+    # If no service passed explicitly, auto-pick from provider's service types
+    if not service and provider:
+        service = provider.service_types.first()
+
     # Get all services for the dropdown
     services = _safe_services_queryset()
     
@@ -79,8 +169,7 @@ def book_service(request, service_id=None):
                 # Pre-fill email from user account if not provided
                 if not booking.email and request.user.email:
                     booking.email = request.user.email
-            # Customer books directly without a provider assignment stage.
-            booking.provider = None
+            booking.provider = provider
             booking.status = 'pending'  # Status: pending until admin confirms
             booking.save()
             # Store booking ID in session for the success page
@@ -90,6 +179,8 @@ def book_service(request, service_id=None):
         initial_data = {}
         if service:
             initial_data['service'] = service
+        # If provider has specific services, we could preselect one, but let's keep it simple
+        
         # Pre-fill email from user account if logged in
         if request.user.is_authenticated and request.user.email:
             initial_data['email'] = request.user.email
@@ -98,6 +189,7 @@ def book_service(request, service_id=None):
     return render(request, 'services/book.html', {
         'form': form,
         'service': service,
+        'provider': provider,
         'services': services,
     })
 
@@ -156,6 +248,7 @@ def dashboard(request):
             'completed': bookings.filter(status='completed').count(),
             'cancelled': bookings.filter(status='cancelled').count(),
         }
+        pending_providers = Provider.objects.filter(is_approved=False).order_by('-user__date_joined')
         is_admin = True
     else:
         # Regular user view - show only their bookings
@@ -164,6 +257,7 @@ def dashboard(request):
         upcoming_bookings = bookings.filter(status__in=['pending', 'confirmed', 'in_progress'])
         past_bookings = bookings.filter(status__in=['completed', 'cancelled'])
         admin_stats = None
+        pending_providers = None
         is_admin = False
     
     return render(request, 'services/dashboard.html', {
@@ -172,6 +266,7 @@ def dashboard(request):
         'past_bookings': past_bookings,
         'all_bookings': all_bookings,
         'admin_stats': admin_stats,
+        'pending_providers': pending_providers,
         'is_admin': is_admin,
         'filters': {
             'q': search_query,
@@ -295,3 +390,200 @@ def check_postcode(request):
                 return JsonResponse({'valid': True, 'area': area.city})
     
     return JsonResponse({'valid': False})
+
+
+# ─── Provider Flow Views ───────────────────────────────────────────────────────
+
+from .forms import ProviderSignupForm, ProviderProfileForm, ProviderUpdateProfileForm
+
+def provider_signup(request):
+    """2-step provider registration: account + service details"""
+    if request.method == 'POST':
+        step = request.POST.get('step', '1')
+
+        if step == '1':
+            user_form = ProviderSignupForm(request.POST)
+            profile_form = ProviderProfileForm()
+            if user_form.is_valid():
+                # Store step 1 data in session
+                request.session['provider_signup'] = {
+                    'first_name': user_form.cleaned_data['first_name'],
+                    'last_name': user_form.cleaned_data['last_name'],
+                    'username': user_form.cleaned_data['username'],
+                    'email': user_form.cleaned_data['email'],
+                    'password': user_form.cleaned_data['password1'],
+                }
+                return render(request, 'services/provider_signup.html', {
+                    'step': 2,
+                    'user_form': user_form,
+                    'profile_form': ProviderProfileForm(),
+                })
+            return render(request, 'services/provider_signup.html', {
+                'step': 1,
+                'user_form': user_form,
+                'profile_form': ProviderProfileForm(),
+            })
+
+        elif step == '2':
+            signup_data = request.session.get('provider_signup')
+            if not signup_data:
+                messages.error(request, 'Session expired. Please start again.')
+                return redirect('provider_signup')
+
+            profile_form = ProviderProfileForm(request.POST)
+            if profile_form.is_valid():
+                # Create user
+                user = User.objects.create_user(
+                    username=signup_data['username'],
+                    email=signup_data['email'],
+                    password=signup_data['password'],
+                    first_name=signup_data['first_name'],
+                    last_name=signup_data['last_name'],
+                )
+                # Create provider (not approved yet)
+                provider = Provider.objects.create(
+                    user=user,
+                    phone=profile_form.cleaned_data['phone'],
+                    experience=profile_form.cleaned_data['experience'],
+                    bio=profile_form.cleaned_data['bio'],
+                    is_approved=False,
+                )
+                provider.service_types.set(profile_form.cleaned_data['service_types'])
+                provider.service_areas.set(profile_form.cleaned_data['service_areas'])
+
+                del request.session['provider_signup']
+                messages.success(request, 'Registration submitted! You will receive an email once approved.')
+                return redirect('provider_pending')
+            
+            return render(request, 'services/provider_signup.html', {
+                'step': 2,
+                'profile_form': profile_form,
+            })
+    else:
+        user_form = ProviderSignupForm()
+        profile_form = ProviderProfileForm()
+
+    return render(request, 'services/provider_signup.html', {
+        'step': 1,
+        'user_form': user_form,
+        'profile_form': profile_form,
+    })
+
+
+def provider_pending(request):
+    """Page shown after provider submits signup, waiting for admin approval"""
+    return render(request, 'services/provider_pending.html')
+
+
+@login_required
+def admin_approve_provider(request, provider_id):
+    """Approve provider from the admin front-end dashboard"""
+    if not (request.user.is_staff or request.user.is_superuser):
+        messages.error(request, 'You do not have permission to perform this action.')
+        return redirect('dashboard')
+        
+    provider = get_object_or_404(Provider, id=provider_id)
+    if request.method == 'POST':
+        provider.is_approved = True
+        provider.save()
+        
+        from django.core.mail import send_mail
+        try:
+            send_mail(
+                subject='🎉 Your HomeFix Provider Account Has Been Approved!',
+                message=(
+                    f"Hi {provider.user.first_name},\n\n"
+                    "Great news! Your application to join HomeFix as a service provider has been approved.\n\n"
+                    "You can now log in to your provider dashboard to manage bookings.\n\n"
+                    "— The HomeFix Team"
+                ),
+                from_email=None,
+                recipient_list=[provider.user.email],
+                fail_silently=False,
+            )
+            messages.success(request, f'{provider.user.get_full_name()} has been approved and notified by email!')
+        except Exception as e:
+            messages.warning(request, f'{provider.user.get_full_name()} was approved, but the email failed to send: {e}')
+            
+    return redirect('dashboard')
+
+
+@login_required
+def provider_dashboard(request):
+    """Provider's personal dashboard"""
+    try:
+        provider = request.user.provider_profile
+    except Provider.DoesNotExist:
+        messages.error(request, 'You do not have a provider profile.')
+        return redirect('home')
+
+    if not provider.is_approved:
+        return redirect('provider_pending')
+
+    bookings = Booking.objects.filter(provider=provider).order_by('-created_at')
+
+    return render(request, 'services/provider_dashboard.html', {
+        'provider': provider,
+        'bookings': bookings,
+    })
+
+
+@login_required
+def provider_update_profile(request):
+    """Provider updates their own bio, experience, areas"""
+    try:
+        provider = request.user.provider_profile
+    except Provider.DoesNotExist:
+        return redirect('home')
+
+    if not provider.is_approved:
+        return redirect('provider_pending')
+
+    if request.method == 'POST':
+        form = ProviderUpdateProfileForm(request.POST)
+        if form.is_valid():
+            provider.phone = form.cleaned_data['phone']
+            provider.experience = form.cleaned_data['experience']
+            provider.bio = form.cleaned_data['bio']
+            provider.service_areas.set(form.cleaned_data['service_areas'])
+            provider.save()
+            messages.success(request, 'Profile updated successfully!')
+            return redirect('provider_dashboard')
+    else:
+        form = ProviderUpdateProfileForm(initial={
+            'phone': provider.phone,
+            'experience': provider.experience,
+            'bio': provider.bio,
+            'service_areas': provider.service_areas.all(),
+        })
+
+    return render(request, 'services/provider_update_profile.html', {
+        'form': form,
+        'provider': provider,
+    })
+
+
+@login_required
+def provider_update_booking(request, booking_id):
+    """Provider updates status of a booking assigned to them"""
+    try:
+        provider = request.user.provider_profile
+    except Provider.DoesNotExist:
+        return redirect('home')
+
+    if not provider.is_approved:
+        return redirect('provider_pending')
+
+    booking = get_object_or_404(Booking, id=booking_id, provider=provider)
+
+    if request.method == 'POST':
+        new_status = request.POST.get('status')
+        valid_statuses = [s[0] for s in Booking.STATUS_CHOICES]
+        if new_status in valid_statuses:
+            booking.status = new_status
+            booking.save()
+            messages.success(request, f'Booking #{booking.id} updated to {new_status.replace("_"," ").title()}.')
+        else:
+            messages.error(request, 'Invalid status.')
+    return redirect('provider_dashboard')
+

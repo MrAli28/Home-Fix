@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <title>{% block title %}Admin Dashboard - HomeFix{% endblock %}</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+
+    <style>
+        body { font-family: 'Manrope', 'Segoe UI', sans-serif; }
+        h1,h2,h3,h4,h5,h6 { font-family: 'Space Grotesk','Manrope',sans-serif; }
+
+        /* ── Navbar ── */
+        .hf-navbar { background-color: #004080; }
+
+        /* ── Hero ── */
+        .hero-section {
+            background-color: #004080;
+            color: white;
+            padding: 80px 0 140px;
+            position: relative;
+            overflow: hidden;
+        }
+        .wave-divider { position: absolute; bottom: 0; left: 0; width: 100%; overflow: hidden; line-height: 0; }
+        .wave-divider svg { display: block; width: calc(100% + 1.3px); height: 70px; }
+        .wave-divider .shape-fill { fill: #f4f7fb; }
+
+        /* ── Admin Tab Nav ── */
+        .admin-nav-strip {
+            background: #fff;
+            border-bottom: 2px solid #e8eef5;
+            position: sticky;
+            top: 0;
+            z-index: 200;
+            box-shadow: 0 4px 16px rgba(0,64,128,0.07);
+        }
+        .admin-nav-strip .nav-link {
+            color: #607187;
+            font-weight: 600;
+            font-size: 0.875rem;
+            padding: 14px 20px;
+            border-bottom: 3px solid transparent;
+            border-radius: 0;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .admin-nav-strip .nav-link:hover { color: #004080; background: #f0f5ff; }
+        .admin-nav-strip .nav-link.active {
+            color: #004080;
+            border-bottom-color: #004080;
+            background: transparent;
+        }
+        .admin-nav-strip .nav-link i { margin-right: 6px; }
+
+        /* ── Content wrapper ── */
+        .admin-content {
+            background: #f4f7fb;
+            min-height: 60vh;
+            padding: 36px 0 60px;
+        }
+
+        /* ── Stat Cards ── */
+        .stat-card {
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 2px 14px rgba(0,64,128,0.07);
+            padding: 22px 24px;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            border: 1px solid #e8eef5;
+            transition: transform .2s, box-shadow .2s;
+        }
+        .stat-card:hover { transform: translateY(-4px); box-shadow: 0 10px 28px rgba(0,64,128,0.12); }
+        .stat-icon { width: 54px; height: 54px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0; }
+        .stat-value { font-size: 2rem; font-weight: 800; line-height: 1.1; color: #1d2a39; }
+        .stat-label { color: #607187; font-weight: 600; font-size: 0.78rem; text-transform: uppercase; letter-spacing: .6px; margin: 0; }
+
+        /* ── Section Cards ── */
+        .section-card {
+            background: #fff;
+            border-radius: 14px;
+            border: none;
+            box-shadow: 0 2px 14px rgba(0,64,128,0.06);
+            overflow: hidden;
+        }
+        .section-card-header {
+            padding: 18px 22px;
+            border-bottom: 1px solid #e8eef5;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+            background: #fff;
+        }
+        .section-card-header h5 { margin: 0; font-weight: 700; color: #1d2a39; }
+
+        /* ── Tables ── */
+        .table-hf th {
+            font-size: 0.73rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .6px;
+            color: #607187;
+            padding: 14px 20px;
+            background: #f8fafc;
+            border-bottom: 1px solid #e8eef5;
+        }
+        .table-hf td { padding: 14px 20px; vertical-align: middle; border-bottom: 1px solid #f0f4f8; }
+        .table-hf tbody tr:hover { background: #f7faff; }
+
+        /* ── Status badges ── */
+        .status-pending    { background:#fff3cd; color:#856404; }
+        .status-confirmed  { background:#cff4fc; color:#055160; }
+        .status-in_progress{ background:#d1ecf1; color:#0c5460; }
+        .status-completed  { background:#d4edda; color:#155724; }
+        .status-cancelled  { background:#f8d7da; color:#721c24; }
+        .status-badge { font-size:.78rem; padding:5px 11px; border-radius:20px; font-weight:600; display:inline-block; }
+    </style>
+
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+<!-- ─── NAVBAR (same as site) ─── -->
+<nav class="navbar navbar-expand-lg navbar-dark sticky-top hf-navbar">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="{% url 'home' %}"><i class="fas fa-tools me-2"></i>HomeFix</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="adminNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'providers_list' %}">Services</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'contact' %}">Contact</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">About Us</a></li>
+            </ul>
+            <div class="navbar-nav">
+                <div class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-user-circle me-1"></i>{{ user.first_name|default:user.username }}
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li class="px-3 py-2 border-bottom">
+                            <div class="fw-bold small">{{ user.get_full_name|default:user.username }}</div>
+                            <div class="text-muted" style="font-size:.78rem;">{{ user.email }}</div>
+                        </li>
+                        <li><a class="dropdown-item" href="{% url 'admin_dashboard_home' %}"><i class="fas fa-shield-alt me-2 text-primary"></i>Admin Dashboard</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- ─── HERO (same style as every page) ─── -->
+<div class="hero-section text-center">
+    <div class="container">
+        <h1 class="display-4 fw-bold mb-2">{% block hero_title %}Admin Dashboard{% endblock %}</h1>
+        <p class="lead mb-0">{% block hero_subtitle %}Manage your entire HomeFix platform from one place.{% endblock %}</p>
+    </div>
+    <div class="wave-divider">
+        <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+            <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="shape-fill"></path>
+        </svg>
+    </div>
+</div>
+
+<!-- ─── STICKY TAB NAV ─── -->
+<div class="admin-nav-strip">
+    <div class="container">
+        <nav class="nav overflow-auto flex-nowrap">
+            <a href="{% url 'admin_dashboard_home' %}"     class="nav-link {% if active_tab == 'dashboard' %}active{% endif %}"><i class="fas fa-chart-pie"></i> Overview</a>
+            <a href="{% url 'admin_manage_users' %}"       class="nav-link {% if active_tab == 'users' %}active{% endif %}"><i class="fas fa-users"></i> Customers</a>
+            <a href="{% url 'admin_manage_providers' %}"   class="nav-link {% if active_tab == 'providers' %}active{% endif %}"><i class="fas fa-user-tie"></i> Providers</a>
+            <a href="{% url 'admin_manage_bookings' %}"    class="nav-link {% if active_tab == 'bookings' %}active{% endif %}"><i class="fas fa-calendar-alt"></i> Bookings</a>
+            <a href="{% url 'admin_manage_website' %}"     class="nav-link {% if active_tab == 'website' %}active{% endif %}"><i class="fas fa-globe"></i> Services & Areas</a>
+        </nav>
+    </div>
+</div>
+
+<!-- ─── MESSAGES ─── -->
+{% if messages %}
+<div class="container mt-4">
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show border-0 shadow-sm rounded-3">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<!-- ─── MAIN CONTENT ─── -->
+<div class="admin-content">
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+</div>
+
+<!-- ─── FOOTER (same as site) ─── -->
+<footer class="text-white hf-footer">
+    <div class="py-5">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6">
+                    <h5 class="mb-3 fw-bold"><i class="fas fa-tools me-2"></i>HomeFix</h5>
+                    <p class="opacity-75">Your trusted partner for professional home services across the UK. We connect skilled professionals with homeowners to provide top-quality home maintenance and improvement services.</p>
+                    <div class="d-flex gap-3 mt-3">
+                        <a href="https://facebook.com/homefixuk" target="_blank" rel="noopener noreferrer" class="text-white hf-social-link"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://instagram.com/homefixuk" target="_blank" rel="noopener noreferrer" class="text-white hf-social-link"><i class="fab fa-instagram"></i></a>
+                        <a href="https://wa.me/923061642273" target="_blank" rel="noopener noreferrer" class="text-white hf-social-link"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6">
+                    <h5 class="mb-3 fw-bold">Services</h5>
+                    <ul class="list-unstyled footer-links">
+                        <li class="mb-2"><a href="{% url 'providers_list' %}" class="text-white text-decoration-none opacity-75">Plumbing</a></li>
+                        <li class="mb-2"><a href="{% url 'providers_list' %}" class="text-white text-decoration-none opacity-75">Electrical</a></li>
+                        <li class="mb-2"><a href="{% url 'providers_list' %}" class="text-white text-decoration-none opacity-75">Cleaning</a></li>
+                        <li class="mb-2"><a href="{% url 'providers_list' %}" class="text-white text-decoration-none opacity-75">Gardening</a></li>
+                        <li><a href="{% url 'providers_list' %}" class="text-white text-decoration-none opacity-75">View All</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-6">
+                    <h5 class="mb-3 fw-bold">Quick Links</h5>
+                    <ul class="list-unstyled footer-links">
+                        <li class="mb-2"><a href="{% url 'home' %}" class="text-white text-decoration-none opacity-75">Home</a></li>
+                        <li class="mb-2"><a href="{% url 'about' %}" class="text-white text-decoration-none opacity-75">About Us</a></li>
+                        <li class="mb-2"><a href="{% url 'contact' %}" class="text-white text-decoration-none opacity-75">Contact</a></li>
+                        <li class="mb-2"><a href="{% url 'privacy_policy' %}" class="text-white text-decoration-none opacity-75">Privacy Policy</a></li>
+                        <li><a href="{% url 'terms_of_service' %}" class="text-white text-decoration-none opacity-75">Terms of Service</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h5 class="mb-3 fw-bold">HomeFix</h5>
+                    <p class="text-white-50 mb-1"><i class="fas fa-map-marker-alt me-2"></i>29 Barton Avenue, Romford, RM7 ONB</p>
+                    <p class="text-white-50 mb-1"><i class="fas fa-phone me-2"></i>+447466992512</p>
+                    <p class="text-white-50 mb-1"><i class="fas fa-envelope me-2"></i>ajbuilders.construction29@gmail.com</p>
+                    <p class="text-white-50 mb-1"><i class="fas fa-shield-alt me-2"></i>Fully Insured</p>
+                    <p class="text-white-50 mb-1"><i class="fas fa-clock me-2"></i>Mon-Sat: 9AM to 6PM</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="py-3 hf-footer-bottom">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6 text-center text-md-start">
+                    <p class="mb-0 opacity-75">&copy; {% now "Y" %} HomeFix. All rights reserved.</p>
+                </div>
+                <div class="col-md-6 text-center text-md-end mt-3 mt-md-0">
+                    <a href="{% url 'privacy_policy' %}" class="text-white text-decoration-none opacity-75 me-3">Privacy Policy</a>
+                    <a href="{% url 'terms_of_service' %}" class="text-white text-decoration-none opacity-75">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{% static 'js/main.js' %}"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,154 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ service.name }} - Request a Provider{% endblock %}
+
+{% block extra_css %}
+<style>
+    .hero-section {
+        background-color: #004080;
+        color: white;
+        padding: 140px 0 160px;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .wave-divider {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        overflow: hidden;
+        line-height: 0;
+    }
+    
+    .wave-divider svg {
+        position: relative;
+        display: block;
+        width: calc(100% + 1.3px);
+        height: 70px;
+    }
+    
+    .wave-divider .shape-fill {
+        fill: #FFFFFF;
+    }
+
+    .request-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        border: none;
+        overflow: hidden;
+        margin-top: 60px;
+        margin-bottom: 60px;
+        min-height: 550px;
+    }
+
+    .service-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        min-height: 550px;
+    }
+
+    .btn-primary {
+        background-color: #0074D9;
+        border-color: #0074D9;
+    }
+    
+    .btn-primary:hover {
+        background-color: #005bb5;
+        border-color: #005bb5;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="hero-section text-center">
+    <div class="container">
+        <h1 class="display-4 fw-bold mb-3">{{ service.name }}</h1>
+        <p class="lead mb-0">Find the best verified providers in your area.</p>
+    </div>
+    <!-- Wave divider -->
+    <div class="wave-divider">
+        <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+            <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="shape-fill"></path>
+        </svg>
+    </div>
+</div>
+
+<div class="container mb-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="request-card">
+                <div class="row g-0">
+                    <div class="col-md-5">
+                        {% if 'plumbing' in service.name|lower %}
+                            <img src="{% static 'images/plumbing.jpg' %}" class="service-image" alt="{{ service.name }}">
+                        {% elif 'electrical' in service.name|lower or 'electric' in service.name|lower %}
+                            <img src="{% static 'images/electrician.jpeg' %}" class="service-image" alt="{{ service.name }}">
+                        {% elif 'clean' in service.name|lower %}
+                            <img src="{% static 'images/cleaning.jpeg' %}" class="service-image" alt="{{ service.name }}">
+                        {% elif 'garden' in service.name|lower or 'landscaping' in service.name|lower %}
+                            <img src="{% static 'images/gardening.jpeg' %}" class="service-image" alt="{{ service.name }}">
+                        {% elif 'paint' in service.name|lower or 'painting' in service.name|lower %}
+                            <img src="{% static 'images/painting.jpeg' %}" class="service-image" alt="{{ service.name }}">
+                        {% elif 'carpent' in service.name|lower or 'wood' in service.name|lower %}
+                            <img src="{% static 'images/carpenter.jpeg' %}" class="service-image" alt="{{ service.name }}">
+                        {% else %}
+                            <img src="{% static 'images/maintenence.jpeg' %}" class="service-image" alt="{{ service.name }}">
+                        {% endif %}
+                    </div>
+                    <div class="col-md-7 p-4 p-md-5">
+                        <h3 class="fw-bold mb-4">Request Details</h3>
+                        <form action="{% url 'providers_list' %}" method="get">
+                            <input type="hidden" name="service" value="{{ service.id }}">
+                            
+                            <div class="mb-3">
+                                <label class="form-label text-muted small text-uppercase fw-bold">Service Required</label>
+                                <input type="text" class="form-control bg-light py-2" value="{{ service.name }}" readonly>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="location" class="form-label text-muted small text-uppercase fw-bold">Your Location</label>
+                                <select name="location" id="location" class="form-select py-2" required>
+                                    <option value="">Select Area...</option>
+                                    {% for area in service_areas %}
+                                        <option value="{{ area.city }}">{{ area.city }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-sm-6 mb-3">
+                                    <label for="date" class="form-label text-muted small text-uppercase fw-bold">Date</label>
+                                    <input type="date" name="date" id="date" class="form-control py-2" required>
+                                </div>
+                                <div class="col-sm-6 mb-4">
+                                    <label for="time" class="form-label text-muted small text-uppercase fw-bold">Time</label>
+                                    <input type="time" name="time" id="time" class="form-control py-2" required>
+                                </div>
+                            </div>
+                            
+                            <div class="d-grid mt-2">
+                                <button type="submit" class="btn btn-primary py-3 fw-bold fs-5">Explore Providers</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CTA Section -->
+<section class="bg-light mt-5 border-top d-flex align-items-center" style="min-height: 400px;">
+    <div class="container text-center">
+        <h2 class="fw-bold mb-3 display-5">Need Immediate Assistance?</h2>
+        <p class="lead text-muted mb-4">Our support team is ready to help you find the perfect professional for your needs.</p>
+        <a href="{% url 'contact' %}" class="btn btn-primary btn-lg px-5 py-3 rounded-pill fw-bold shadow-sm">
+            <i class="bi bi-headset me-2"></i> Contact Support
+        </a>
+    </div>
+</section>
+{% endblock %}

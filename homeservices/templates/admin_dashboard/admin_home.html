@@ -1,0 +1,127 @@
+{% extends 'admin_dashboard/admin_base.html' %}
+
+{% block title %}Overview - Admin Dashboard{% endblock %}
+{% block page_title %}Dashboard Overview{% endblock %}
+{% block hero_title %}Admin Dashboard{% endblock %}
+{% block hero_subtitle %}Welcome back, {{ user.first_name }}! Here's what's happening on HomeFix today.{% endblock %}
+
+{% block content %}
+
+<!-- Action Alert -->
+{% if pending_providers > 0 %}
+<div class="alert border-0 shadow-sm rounded-3 mb-4 d-flex align-items-center justify-content-between flex-wrap gap-3" style="background:#fff3cd; color:#856404;">
+    <div class="d-flex align-items-center gap-3">
+        <i class="fas fa-exclamation-triangle fs-4"></i>
+        <div>
+            <strong>Action Required!</strong>
+            You have <strong>{{ pending_providers }}</strong> provider application(s) waiting for your approval.
+        </div>
+    </div>
+    <a href="{% url 'admin_manage_providers' %}" class="btn btn-sm fw-bold rounded-pill px-4" style="background:#856404; color:white;">Review Now</a>
+</div>
+{% endif %}
+
+<!-- Stat Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-xl-3 col-md-6">
+        <div class="stat-card">
+            <div class="stat-icon" style="background:#e8f0fe; color:#1a73e8;"><i class="fas fa-users"></i></div>
+            <div>
+                <p class="stat-label">Total Customers</p>
+                <div class="stat-value">{{ total_customers }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="stat-card">
+            <div class="stat-icon" style="background:#e6f4ea; color:#1e8e3e;"><i class="fas fa-user-tie"></i></div>
+            <div>
+                <p class="stat-label">Active Providers</p>
+                <div class="stat-value">{{ total_providers }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="stat-card">
+            <div class="stat-icon" style="background:#fce8e6; color:#d93025;"><i class="fas fa-calendar-check"></i></div>
+            <div>
+                <p class="stat-label">Total Bookings</p>
+                <div class="stat-value">{{ total_bookings }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="stat-card">
+            <div class="stat-icon" style="background:#fef7e0; color:#f9ab00;"><i class="fas fa-pound-sign"></i></div>
+            <div>
+                <p class="stat-label">Total Revenue</p>
+                <div class="stat-value">£{{ total_revenue }}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tables Row -->
+<div class="row g-4">
+    <!-- Recent Bookings -->
+    <div class="col-lg-8">
+        <div class="section-card">
+            <div class="section-card-header">
+                <h5><i class="fas fa-calendar-alt me-2 text-primary"></i>Recent Bookings</h5>
+                <a href="{% url 'admin_manage_bookings' %}" class="btn btn-sm btn-outline-primary rounded-pill px-4">View All</a>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hf mb-0">
+                    <thead>
+                        <tr>
+                            <th>Service</th>
+                            <th>Customer</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for b in recent_bookings %}
+                        <tr>
+                            <td class="fw-bold">{{ b.service.name }}</td>
+                            <td>{{ b.customer.get_full_name|default:b.customer.username|default:"Guest" }}</td>
+                            <td class="text-muted small">{{ b.date|date:"M d, Y" }}</td>
+                            <td><span class="status-badge status-{{ b.status }}">{{ b.get_status_display }}</span></td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="4" class="text-center py-5 text-muted">No bookings yet.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Newest Customers -->
+    <div class="col-lg-4">
+        <div class="section-card">
+            <div class="section-card-header">
+                <h5><i class="fas fa-user-plus me-2 text-success"></i>Newest Customers</h5>
+                <a href="{% url 'admin_manage_users' %}" class="btn btn-sm btn-outline-primary rounded-pill px-4">View All</a>
+            </div>
+            <ul class="list-group list-group-flush">
+                {% for u in recent_users %}
+                <li class="list-group-item d-flex align-items-center gap-3 py-3 border-0" style="border-bottom: 1px solid #f0f4f8 !important;">
+                    <div class="rounded-circle text-white fw-bold d-flex align-items-center justify-content-center flex-shrink-0" style="width:38px;height:38px;background:#004080;font-size:.9rem;">
+                        {{ u.username|make_list|first|upper }}
+                    </div>
+                    <div class="overflow-hidden">
+                        <div class="fw-bold text-truncate">{{ u.get_full_name|default:u.username }}</div>
+                        <div class="small text-muted text-truncate">{{ u.email }}</div>
+                        <div class="small text-muted">Joined {{ u.date_joined|timesince }} ago</div>
+                    </div>
+                </li>
+                {% empty %}
+                <li class="list-group-item text-center py-5 text-muted border-0">No customers yet.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
