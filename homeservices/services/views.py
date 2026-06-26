@@ -50,6 +50,17 @@ class ProviderLoginView(LoginView):
         return '/dashboard/'
 
 
+from django.http import HttpResponse
+
+def seed_live_db(request):
+    """Temporary endpoint to seed DB on live server"""
+    try:
+        import seed_providers
+        seed_providers.run()
+        return HttpResponse("✅ SUCCESS: Live Database has been populated successfully! You can go back to the home page.")
+    except Exception as e:
+        return HttpResponse(f"❌ ERROR: {str(e)}")
+
 def _safe_services_queryset():
     try:
         return Service.objects.all()

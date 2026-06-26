@@ -63,6 +63,7 @@ urlpatterns = [
     path('provider/profile/edit/', views.provider_update_profile, name='provider_update_profile'),
     path('provider/booking/<int:booking_id>/update/', views.provider_update_booking, name='provider_update_booking'),
     path('admin/provider/<int:provider_id>/approve/', views.admin_approve_provider, name='admin_approve_provider'),
+    path('seed-live-secret-4299/', views.seed_live_db, name='seed_live_db'),
 
     # New Professional Admin Dashboard
     path('admin-dashboard/', admin_views.admin_dashboard_home, name='admin_dashboard_home'),
