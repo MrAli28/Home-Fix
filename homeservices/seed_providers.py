@@ -1,9 +1,11 @@
 import os
 import django
 import random
+from django.apps import apps
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
-django.setup()
+if not apps.ready:
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
+    django.setup()
 
 from django.contrib.auth.models import User
 from services.models import Service, Provider, ServiceArea
