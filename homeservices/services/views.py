@@ -132,8 +132,10 @@ def providers_list(request):
 def provider_detail(request, provider_id):
     """Provider detail page"""
     provider = get_object_or_404(Provider, id=provider_id)
+    reviews = Review.objects.filter(booking__provider=provider).order_by('-date')
     return render(request, 'services/provider_detail.html', {
         'provider': provider,
+        'reviews': reviews,
     })
 
 def contact(request):
@@ -316,6 +318,15 @@ def rate_booking(request, booking_id):
             booking.rating = review.rating
             booking.feedback = review.comment
             booking.save()
+            
+            # Update provider rating
+            if booking.provider:
+                from django.db.models import Avg
+                provider = booking.provider
+                avg_rating = Review.objects.filter(booking__provider=provider).aggregate(Avg('rating'))['rating__avg']
+                if avg_rating is not None:
+                    provider.rating = round(avg_rating, 2)
+                    provider.save()
             
             messages.success(request, 'Thank you for your review!')
             return redirect('dashboard')
@@ -529,10 +540,12 @@ def provider_dashboard(request):
         return redirect('provider_pending')
 
     bookings = Booking.objects.filter(provider=provider).order_by('-created_at')
+    reviews = Review.objects.filter(booking__provider=provider).order_by('-date')
 
     return render(request, 'services/provider_dashboard.html', {
         'provider': provider,
         'bookings': bookings,
+        'reviews': reviews,
     })
 
 

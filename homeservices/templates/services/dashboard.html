@@ -396,7 +396,18 @@
                                                 <div class="col-12"><strong>Notes:</strong><br>{{ booking.notes }}</div>
                                                 {% endif %}
                                                 {% if booking.feedback %}
-                                                <div class="col-12"><strong>Feedback:</strong><br>{{ booking.feedback }}</div>
+                                                <div class="col-12">
+                                                    <strong>Customer Review:</strong><br>
+                                                    <div class="text-warning mb-1">
+                                                        {% if booking.rating >= 1 %}<i class="fas fa-star"></i>{% else %}<i class="far fa-star"></i>{% endif %}
+                                                        {% if booking.rating >= 2 %}<i class="fas fa-star"></i>{% else %}<i class="far fa-star"></i>{% endif %}
+                                                        {% if booking.rating >= 3 %}<i class="fas fa-star"></i>{% else %}<i class="far fa-star"></i>{% endif %}
+                                                        {% if booking.rating >= 4 %}<i class="fas fa-star"></i>{% else %}<i class="far fa-star"></i>{% endif %}
+                                                        {% if booking.rating >= 5 %}<i class="fas fa-star"></i>{% else %}<i class="far fa-star"></i>{% endif %}
+                                                        <span class="text-dark fw-bold ms-1">{{ booking.rating }}/5</span>
+                                                    </div>
+                                                    "{{ booking.feedback }}"
+                                                </div>
                                                 {% endif %}
                                             </div>
                                         </div>

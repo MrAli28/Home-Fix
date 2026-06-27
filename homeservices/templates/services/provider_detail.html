@@ -38,24 +38,28 @@
                 </div>
             </div>
 
-            <!-- Provider Reviews (Placeholder/Mockup for now since Review model is tied to Booking) -->
+            <!-- Provider Reviews -->
             <div class="card shadow-sm border-0">
                 <div class="card-body p-4">
                     <h4 class="border-bottom pb-2 mb-3">Recent Reviews</h4>
-                    <div class="mb-3 border-bottom pb-3">
-                        <div class="text-warning mb-1">
-                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                    {% if reviews %}
+                        {% for review in reviews %}
+                        <div class="mb-3 {% if not forloop.last %}border-bottom pb-3{% endif %}">
+                            <div class="text-warning mb-1">
+                                {% if review.rating >= 1 %}<i class="fas fa-star"></i>{% else %}<i class="far fa-star"></i>{% endif %}
+                                {% if review.rating >= 2 %}<i class="fas fa-star"></i>{% else %}<i class="far fa-star"></i>{% endif %}
+                                {% if review.rating >= 3 %}<i class="fas fa-star"></i>{% else %}<i class="far fa-star"></i>{% endif %}
+                                {% if review.rating >= 4 %}<i class="fas fa-star"></i>{% else %}<i class="far fa-star"></i>{% endif %}
+                                {% if review.rating >= 5 %}<i class="fas fa-star"></i>{% else %}<i class="far fa-star"></i>{% endif %}
+                                <span class="text-dark ms-2 fw-bold">{{ review.rating }}/5</span>
+                            </div>
+                            <p class="mb-1">"{{ review.comment }}"</p>
+                            <small class="text-muted">- {{ review.booking.customer.get_full_name|default:review.booking.customer.username }}, {{ review.date|date:"F Y" }}</small>
                         </div>
-                        <p class="mb-1">"Excellent service, very professional and arrived on time. Highly recommended!"</p>
-                        <small class="text-muted">- A verified customer</small>
-                    </div>
-                    <div>
-                        <div class="text-warning mb-1">
-                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i>
-                        </div>
-                        <p class="mb-1">"Did a great job, very clean and tidy."</p>
-                        <small class="text-muted">- A verified customer</small>
-                    </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted mb-0">No reviews yet for this provider.</p>
+                    {% endif %}
                 </div>
             </div>
         </div>
