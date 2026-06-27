@@ -96,30 +96,50 @@ def service_request(request, service_id):
 def providers_list(request):
     """Providers listing page based on location and service"""
     service_id = request.GET.get('service')
-    location = request.GET.get('location')
-    time = request.GET.get('time')
-    date = request.GET.get('date')
-    
-    providers = Provider.objects.all().prefetch_related('user', 'service_types', 'service_areas')
+    location   = request.GET.get('location')
+    time_val   = request.GET.get('time')
+    date_val   = request.GET.get('date')
+
+    base_qs = Provider.objects.filter(is_approved=True).prefetch_related(
+        'user', 'service_types', 'service_areas'
+    )
     service_obj = None
-    
+
     if service_id:
-        providers = providers.filter(service_types__id=service_id)
+        base_qs = base_qs.filter(service_types__id=service_id)
         service_obj = get_object_or_404(Service, id=service_id)
     if location:
-        providers = providers.filter(service_areas__city__iexact=location)
-        
-    # Order by rating and total_jobs, and limit to top 3
-    providers = providers.order_by('-rating', '-total_jobs')[:3]
-        
+        base_qs = base_qs.filter(service_areas__city__iexact=location)
+
+    # Top 3 (shown at the top, same as before)
+    top3_providers = base_qs.order_by('-rating', '-total_jobs')[:3]
+
+    # All providers grouped by service (for "View All" section below)
+    all_services = Service.objects.all().order_by('name')
+    services_with_providers = []
+    for svc in all_services:
+        svc_qs = Provider.objects.filter(
+            is_approved=True, service_types=svc
+        ).prefetch_related('user', 'service_types', 'service_areas')
+        if location:
+            svc_qs = svc_qs.filter(service_areas__city__iexact=location)
+        svc_providers = svc_qs.order_by('-rating', '-total_jobs')
+        if svc_providers.exists():
+            services_with_providers.append({
+                'service': svc,
+                'providers': svc_providers,
+            })
+
     return render(request, 'services/providers_list.html', {
-        'providers': providers,
-        'selected_service': service_id,
-        'selected_location': location,
-        'selected_time': time,
-        'selected_date': date,
-        'service_obj': service_obj,
+        'top3_providers':         top3_providers,
+        'services_with_providers': services_with_providers,
+        'selected_service':        service_id,
+        'selected_location':       location,
+        'selected_time':           time_val,
+        'selected_date':           date_val,
+        'service_obj':             service_obj,
     })
+
 
 def provider_detail(request, provider_id):
     """Provider detail page"""
