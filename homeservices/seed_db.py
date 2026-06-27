@@ -114,12 +114,12 @@ def seed_providers():
         return
 
     created = 0
-    ratings   = [5.0, 4.8, 4.5]
-    job_counts = [120, 85, 45]
+    ratings   = [5.0, 4.9, 4.8, 4.7, 4.6, 4.5, 4.4, 4.3, 4.2]
+    job_counts = [150, 130, 120, 95, 85, 70, 60, 45, 30]
 
     for area in areas:
         for svc in services:
-            for i in range(3):
+            for i in range(9):
                 username = f"provider_{area.city.lower()}_{svc.name.lower()}_{i}"
 
                 if User.objects.filter(username=username).exists():

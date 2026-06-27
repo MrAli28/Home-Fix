@@ -111,28 +111,16 @@ def providers_list(request):
     if location:
         base_qs = base_qs.filter(service_areas__city__iexact=location)
 
-    # Top 3 (shown at the top, same as before)
-    top3_providers = base_qs.order_by('-rating', '-total_jobs')[:3]
-
-    # All providers grouped by service (for "View All" section below)
-    all_services = Service.objects.all().order_by('name')
-    services_with_providers = []
-    for svc in all_services:
-        svc_qs = Provider.objects.filter(
-            is_approved=True, service_types=svc
-        ).prefetch_related('user', 'service_types', 'service_areas')
-        if location:
-            svc_qs = svc_qs.filter(service_areas__city__iexact=location)
-        svc_providers = svc_qs.order_by('-rating', '-total_jobs')
-        if svc_providers.exists():
-            services_with_providers.append({
-                'service': svc,
-                'providers': svc_providers,
-            })
+    # Order all filtered providers
+    all_filtered = base_qs.order_by('-rating', '-total_jobs')
+    
+    # Split into Top 3 and the rest
+    top3_providers = all_filtered[:3]
+    other_providers = all_filtered[3:]
 
     return render(request, 'services/providers_list.html', {
         'top3_providers':         top3_providers,
-        'services_with_providers': services_with_providers,
+        'other_providers':        other_providers,
         'selected_service':        service_id,
         'selected_location':       location,
         'selected_time':           time_val,

@@ -175,38 +175,31 @@
     </div>
 
     <!-- ── VIEW ALL BUTTON ── -->
-    {% if top3_providers %}
+    {% if other_providers %}
     <div class="text-center mb-5">
-        <a href="#all-providers" class="btn btn-outline-primary btn-lg rounded-pill px-5 fw-bold"
-           onclick="document.getElementById('all-providers').scrollIntoView({behavior:'smooth'}); return false;">
-            <i class="fas fa-th-list me-2"></i> View All Providers
-        </a>
+        <button class="btn btn-outline-primary btn-lg rounded-pill px-5 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#all-providers-collapse" aria-expanded="false" aria-controls="all-providers-collapse">
+            <i class="fas fa-chevron-down me-2"></i> View All Providers
+        </button>
     </div>
-    {% endif %}
 
-    <!-- ══ ALL PROVIDERS BY SERVICE ══ -->
-    <div id="all-providers">
-        {% for group in services_with_providers %}
+    <!-- ══ REST OF THE PROVIDERS (COLLAPSIBLE) ══ -->
+    <div class="collapse" id="all-providers-collapse">
         <div class="service-section">
             <div class="section-title-bar">
                 <div class="svc-icon-circle">
-                    <i class="fas {{ group.service.icon }}"></i>
+                    <i class="fas fa-users"></i>
                 </div>
                 <div>
-                    <h3>{{ group.service.name }} Providers</h3>
-                    <span class="text-muted small">{{ group.providers|length }} professionals available</span>
+                    <h3>All {{ service_obj.name|default:"Available" }} Providers</h3>
+                    <span class="text-muted small">{{ other_providers|length }} more professionals available</span>
                 </div>
             </div>
 
             <div class="row g-4">
-                {% for provider in group.providers %}
+                {% for provider in other_providers %}
                 <div class="col-md-6 col-lg-4">
                     <div class="card provider-card h-100 position-relative">
-                        <!-- Rank badge for top 3 in this category -->
-                        {% if forloop.counter == 1 %}<span class="rank-badge rank-1">🥇</span>
-                        {% elif forloop.counter == 2 %}<span class="rank-badge rank-2">🥈</span>
-                        {% elif forloop.counter == 3 %}<span class="rank-badge rank-3">🥉</span>{% endif %}
-
+                        <!-- Rank badge for top 3 overall, but these are 4+ so no badges needed -->
                         <div class="card-body text-center pt-4">
                             <div class="provider-avatar">
                                 {{ provider.user.first_name|first }}{{ provider.user.last_name|first }}
@@ -234,8 +227,8 @@
                 {% endfor %}
             </div>
         </div>
-        {% endfor %}
     </div>
+    {% endif %}
 
 </div>
 {% endblock %}
