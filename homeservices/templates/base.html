@@ -80,8 +80,16 @@
                     {% else %}
                         <a class="nav-link" href="{% url 'login' %}">Login</a>
                         <a class="nav-link btn btn-outline-light ms-2" href="{% url 'register' %}">Sign Up</a>
-                        <a class="nav-link btn btn-warning text-dark fw-bold ms-2" href="{% url 'provider_signup' %}">Join as Pro</a>
-                        <a class="nav-link ms-2" href="{% url 'provider_login' %}" style="color:rgba(255,255,255,0.75); font-size:0.85rem;">Provider Login</a>
+                        <div class="dropdown ms-2">
+                            <a class="nav-link btn btn-outline-light dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Provider
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" href="{% url 'provider_login' %}"><i class="fas fa-sign-in-alt me-2"></i>Provider Login</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{% url 'provider_signup' %}"><i class="fas fa-user-plus me-2"></i>Register as Provider</a></li>
+                            </ul>
+                        </div>
                     {% endif %}
                 </div>
             </div>
