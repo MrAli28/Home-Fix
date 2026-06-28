@@ -7,6 +7,8 @@ from django.http import JsonResponse
 from django.db.models import Q
 from django.db.utils import OperationalError, ProgrammingError
 from django.contrib.auth.views import LoginView
+from django.core.mail import send_mail
+from django.conf import settings
 from .models import Service, Booking, ServiceArea, Review, Provider
 from .forms import BookingForm, UserRegistrationForm, UserProfileForm, ReviewForm
 
@@ -184,6 +186,73 @@ def book_service(request, service_id=None, provider_id=None):
             booking.save()
             # Store booking ID in session for the success page
             request.session['booking_id'] = booking.id
+
+            # ── Email to Customer ──
+            customer_email = booking.email
+            if customer_email:
+                provider_name = str(booking.provider) if booking.provider else 'Our Team'
+                customer_subject = 'HomeFix – We Received Your Booking Request!'
+                customer_message = f"""Dear {booking.customer.get_full_name() if booking.customer else 'Customer'},
+
+Thank you for choosing HomeFix! We have successfully received your service request.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  BOOKING DETAILS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Booking ID   : #{booking.id}
+  Service      : {booking.service.name}
+  Date         : {booking.date.strftime('%d %B %Y')}
+  Time         : {booking.time.strftime('%I:%M %p')}
+  Address      : {booking.address}, {booking.postcode or ''}
+  Provider     : {provider_name}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Our provider or team will contact you shortly to confirm your appointment.
+
+If you have any questions, feel free to reply to this email.
+
+Warm Regards,
+The HomeFix Team
+thehomefixuk@gmail.com
+"""
+                try:
+                    send_mail(customer_subject, customer_message, settings.DEFAULT_FROM_EMAIL, [customer_email], fail_silently=True)
+                except Exception:
+                    pass
+
+            # ── Email to Provider ──
+            if booking.provider and booking.provider.user.email:
+                provider_subject = f'HomeFix – New Booking Request #{booking.id}'
+                provider_message = f"""Hello {booking.provider.user.get_full_name()},
+
+You have received a new booking request on HomeFix. Please review the customer details below and contact them as soon as possible.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  CUSTOMER DETAILS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Name         : {booking.customer.get_full_name() if booking.customer else 'Guest'}
+  Email        : {booking.email or 'Not provided'}
+  Phone        : {booking.phone_number or 'Not provided'}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  BOOKING DETAILS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Booking ID   : #{booking.id}
+  Service      : {booking.service.name}
+  Date         : {booking.date.strftime('%d %B %Y')}
+  Time         : {booking.time.strftime('%I:%M %p')}
+  Address      : {booking.address}, {booking.postcode or ''}
+  Notes        : {booking.notes or 'None'}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Please log in to your HomeFix Provider Dashboard to manage this booking.
+
+The HomeFix Team
+"""
+                try:
+                    send_mail(provider_subject, provider_message, settings.DEFAULT_FROM_EMAIL, [booking.provider.user.email], fail_silently=True)
+                except Exception:
+                    pass
+
             return redirect('booking_success')
     else:
         initial_data = {}
