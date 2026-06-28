@@ -5,280 +5,417 @@
 
 {% block extra_css %}
 <style>
-    /* Hero Section Styles */
+    /* ── Hero ── */
     .hero-section {
-        background-color: #004080;
+        background: linear-gradient(135deg, #003366 0%, #004080 50%, #005099 100%);
         color: white;
-        padding: 80px 0;
+        padding: 90px 0 140px;
         position: relative;
         overflow: hidden;
     }
-    
-    .wave-divider {
+    .hero-section::before {
+        content: '';
         position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        overflow: hidden;
-        line-height: 0;
-    }
-    
-    .wave-divider svg {
-        position: relative;
-        display: block;
-        width: calc(100% + 1.3px);
-        height: 70px;
-    }
-    
-    .wave-divider .shape-fill {
-        fill: #FFFFFF;
-    }
-    
-    /* Service Cards */
-    .service-card {
-        transition: transform 0.3s ease;
-        height: 100%;
-        border-radius: 10px;
-        overflow: hidden;
-        border: none;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    }
-    
-    .service-card:hover {
-        transform: translateY(-5px);
-    }
-    
-    .service-icon {
-        font-size: 2.5rem;
-        color: #0074D9;
-        margin-bottom: 1rem;
-    }
-    
-    /* Booking Form */
-    .booking-form {
-        background-color: rgba(255, 255, 255, 0.1);
-        border-radius: 10px;
-        padding: 30px;
-        -webkit-backdrop-filter: blur(5px);
-        backdrop-filter: blur(5px);
-        box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-    }
-
-    .service-thumb {
-        height: 120px;
-        object-fit: cover;
-    }
-
-    .service-thumb-sm {
-        height: 100px;
-        object-fit: cover;
-    }
-
-    .is-hidden {
-        display: none;
-    }
-    
-    .booking-form input, .booking-form select {
-        background-color: rgba(255, 255, 255, 0.9);
-        border: none;
-        padding: 12px;
-        border-radius: 8px;
-    }
-    
-    /* Section Styles */
-    .section-title {
-        font-weight: 700;
-        color: #1a202c;
-        margin-bottom: 1.5rem;
-    }
-    
-    .feature-icon {
-        width: 60px;
-        height: 60px;
+        top: -60px; right: -80px;
+        width: 420px; height: 420px;
         border-radius: 50%;
-        background-color: #0074D9;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 1rem;
-        color: white;
-        font-size: 1.5rem;
+        background: rgba(255,255,255,0.05);
+        animation: floatBubble 8s ease-in-out infinite;
     }
-    
-    /* Testimonial Cards */
+    .hero-section::after {
+        content: '';
+        position: absolute;
+        bottom: 60px; left: -100px;
+        width: 300px; height: 300px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.04);
+        animation: floatBubble 10s ease-in-out infinite reverse;
+    }
+    @keyframes floatBubble {
+        0%,100% { transform: translateY(0) scale(1); }
+        50%      { transform: translateY(-20px) scale(1.05); }
+    }
+
+    .hero-title {
+        font-size: clamp(2rem, 5vw, 3.2rem);
+        font-weight: 800;
+        line-height: 1.15;
+        animation: slideInLeft 0.8s ease both;
+    }
+    .hero-subtitle {
+        animation: slideInLeft 0.9s 0.1s ease both;
+        opacity: 0.9;
+    }
+    .hero-btn {
+        animation: slideInLeft 1s 0.2s ease both;
+    }
+    @keyframes slideInLeft {
+        from { opacity: 0; transform: translateX(-30px); }
+        to   { opacity: 1; transform: translateX(0); }
+    }
+
+    /* ── Booking form ── */
+    .booking-form {
+        background: rgba(255,255,255,0.12);
+        border-radius: 20px;
+        padding: 36px 32px;
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        border: 1px solid rgba(255,255,255,0.2);
+        box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+        animation: slideInRight 0.9s 0.15s ease both;
+    }
+    @keyframes slideInRight {
+        from { opacity: 0; transform: translateX(30px); }
+        to   { opacity: 1; transform: translateX(0); }
+    }
+    .booking-form input,
+    .booking-form select {
+        background: rgba(255,255,255,0.92);
+        border: none;
+        padding: 12px 14px;
+        border-radius: 10px;
+        transition: box-shadow 0.25s ease, transform 0.25s ease;
+    }
+    .booking-form input:focus,
+    .booking-form select:focus {
+        box-shadow: 0 0 0 3px rgba(255,255,255,0.4);
+        transform: scale(1.01);
+        outline: none;
+    }
+
+    /* ── Wave ── */
+    .wave-divider { position: absolute; bottom: 0; left: 0; width: 100%; overflow: hidden; line-height: 0; }
+    .wave-divider svg { position: relative; display: block; width: calc(100% + 1.3px); height: 70px; }
+    .wave-divider .shape-fill { fill: #fff; }
+
+    /* ── Service cards ── */
+    .service-card {
+        border: none;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+        transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.35s ease;
+    }
+    .service-card:hover {
+        transform: translateY(-10px) scale(1.02);
+        box-shadow: 0 20px 50px rgba(0,64,128,0.18);
+    }
+    .service-card .service-thumb {
+        height: 130px;
+        object-fit: cover;
+        width: 100%;
+        transition: transform 0.5s ease;
+    }
+    .service-card:hover .service-thumb { transform: scale(1.08); }
+
+    /* ── Why Choose section ── */
+    .why-card {
+        border: none;
+        border-radius: 16px;
+        padding: 32px 24px;
+        text-align: center;
+        background: #fff;
+        box-shadow: 0 4px 20px rgba(0,64,128,0.07);
+        transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.35s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    .why-card::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #004080, #0074D9);
+        transform: scaleX(0);
+        transition: transform 0.35s ease;
+        transform-origin: left;
+    }
+    .why-card:hover::before { transform: scaleX(1); }
+    .why-card:hover { transform: translateY(-8px); box-shadow: 0 18px 40px rgba(0,64,128,0.15); }
+    .why-icon {
+        width: 68px; height: 68px; border-radius: 50%;
+        background: linear-gradient(135deg, #004080, #0074D9);
+        display: flex; align-items: center; justify-content: center;
+        margin: 0 auto 1.2rem;
+        font-size: 1.7rem; color: white;
+        transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .why-card:hover .why-icon { transform: scale(1.18) rotate(-5deg); }
+
+    /* ── Testimonial cards ── */
     .testimonial-card {
         border: none;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-        border-radius: 10px;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+        transition: transform 0.35s ease, box-shadow 0.35s ease;
+        position: relative;
     }
-    
-    .star-rating {
-        color: #FFD700;
+    .testimonial-card::before {
+        content: '\201C';
+        position: absolute;
+        top: 10px; left: 18px;
+        font-size: 4rem;
+        color: #004080;
+        opacity: 0.12;
+        font-family: Georgia, serif;
+        line-height: 1;
+    }
+    .testimonial-card:hover { transform: translateY(-6px); box-shadow: 0 16px 36px rgba(0,64,128,0.12); }
+
+    /* ── Stats bar ── */
+    .stats-bar {
+        background: linear-gradient(135deg, #003366, #004080);
+        color: white;
+        padding: 40px 0;
+    }
+    .stat-item { text-align: center; }
+    .stat-number {
+        font-size: 2.6rem;
+        font-weight: 800;
+        line-height: 1;
+        display: block;
+    }
+    .stat-label { opacity: 0.8; font-size: 0.95rem; }
+
+    /* ── Section heading ── */
+    .section-heading {
+        font-weight: 800;
+        color: #1a202c;
+        position: relative;
+        display: inline-block;
+        padding-bottom: 10px;
+    }
+    .section-heading::after {
+        content: '';
+        position: absolute;
+        bottom: 0; left: 50%; transform: translateX(-50%);
+        width: 50px; height: 4px;
+        background: linear-gradient(90deg, #004080, #0074D9);
+        border-radius: 2px;
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<!-- Hero Section -->
+<!-- ══ HERO ══ -->
 <section class="hero-section">
-    <div class="container">
-        <div class="row align-items-center">
-            <div class="col-lg-6 mb-5 mb-lg-0">
-                <h1 class="display-4 fw-bold mb-4">Professional Home Services and Property Maintenance in London</h1>
-                <p class="lead mb-4">With 20 years of experience, Homefix offers high-quality, affordable property maintenance and home services throughout London.</p>
-                <div class="d-flex gap-3">
-                    <a href="{% url 'providers_list' %}" class="btn btn-light btn-lg px-4 d-inline-flex align-items-center">
+    <div class="container" style="position:relative;z-index:1;">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6">
+                <h1 class="hero-title mb-4">Professional Home Services &amp; Property Maintenance in London</h1>
+                <p class="hero-subtitle lead mb-4 opacity-90">With 20 years of experience, HomeFix offers high-quality, affordable property maintenance and home services throughout London.</p>
+                <div class="d-flex gap-3 hero-btn flex-wrap">
+                    <a href="{% url 'providers_list' %}" class="btn btn-light btn-lg px-5 fw-bold rounded-pill shadow">
                         Book a Service <i class="bi bi-arrow-right ms-2"></i>
                     </a>
+                    <a href="{% url 'about' %}" class="btn btn-outline-light btn-lg px-4 rounded-pill">Learn More</a>
                 </div>
             </div>
             <div class="col-lg-6">
                 <div class="booking-form">
-                    <h2 class="text-center mb-4">Request a Quote Today</h2>
+                    <h3 class="text-white text-center mb-4 fw-bold">Request a Quote Today</h3>
                     <form action="{% url 'providers_list' %}" method="get">
                         <div class="mb-3">
-                            <label for="serviceType" class="form-label">Service Type</label>
+                            <label for="serviceType" class="form-label text-white fw-semibold">Service Type</label>
                             <select class="form-select form-select-lg" id="serviceType" name="service">
-                                <option value="">Select a service</option>
+                                <option value="">Select a service…</option>
                                 {% for service in services %}
                                 <option value="{{ service.id }}">{{ service.name }}</option>
                                 {% endfor %}
                             </select>
                         </div>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="location" class="form-label">Location</label>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label for="location" class="form-label text-white fw-semibold">Location</label>
                                 <select class="form-select" id="location" name="location">
                                     <option value="London">London</option>
                                     <option value="Manchester">Manchester</option>
                                     <option value="Birmingham">Birmingham</option>
                                 </select>
                             </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="date" class="form-label">Preferred Date</label>
+                            <div class="col-md-6">
+                                <label for="date" class="form-label text-white fw-semibold">Preferred Date</label>
                                 <input type="date" class="form-control" id="date" name="date">
                             </div>
                         </div>
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-light btn-lg">Check Availability</button>
-                        </div>
+                        <button type="submit" class="btn btn-light btn-lg w-100 fw-bold rounded-pill">
+                            <i class="fas fa-search me-2"></i>Check Availability
+                        </button>
                     </form>
                 </div>
             </div>
         </div>
-        <!-- Wave divider at bottom of hero section -->
-        <div class="wave-divider">
-            <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
-                <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="shape-fill"></path>
-            </svg>
-        </div>
-    </section>
+    </div>
+    <div class="wave-divider">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+            <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="shape-fill"></path>
+        </svg>
+    </div>
+</section>
 
-    <!-- Services Section -->
-    <section class="py-5">
-        <h2 class="text-center mb-4">Our Specialized Services</h2>
+<!-- ══ STATS BAR ══ -->
+<div class="stats-bar reveal">
+    <div class="container">
+        <div class="row g-4 justify-content-center">
+            <div class="col-6 col-md-3 stat-item">
+                <span class="stat-number">500+</span>
+                <span class="stat-label">Happy Customers</span>
+            </div>
+            <div class="col-6 col-md-3 stat-item">
+                <span class="stat-number">6</span>
+                <span class="stat-label">Services Offered</span>
+            </div>
+            <div class="col-6 col-md-3 stat-item">
+                <span class="stat-number">20+</span>
+                <span class="stat-label">Years Experience</span>
+            </div>
+            <div class="col-6 col-md-3 stat-item">
+                <span class="stat-number">4.9★</span>
+                <span class="stat-label">Average Rating</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ══ SERVICES ══ -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5 reveal">
+            <h2 class="section-heading">Our Specialized Services</h2>
+            <p class="text-muted mt-3">Trusted professionals ready to help you at home</p>
+        </div>
         <div class="row row-cols-1 row-cols-md-3 g-4">
             {% for service in services %}
-            <div class="col">
-                <div class="card h-100 shadow-sm">
-                    <div class="card-body">
-                        <div class="text-center mb-3">
-                            {% if 'plumbing' in service.name|lower %}
-                                <img src="{% static 'images/plumbing.jpg' %}" class="img-fluid rounded mb-3 service-thumb" alt="{{ service.name }}">
-                            {% elif 'electrical' in service.name|lower or 'electric' in service.name|lower %}
-                                <img src="{% static 'images/electrician.jpeg' %}" class="img-fluid rounded mb-3 service-thumb" alt="{{ service.name }}">
-                            {% elif 'clean' in service.name|lower %}
-                                <img src="{% static 'images/cleaning.jpeg' %}" class="img-fluid rounded mb-3 service-thumb" alt="{{ service.name }}">
-                            {% elif 'garden' in service.name|lower or 'landscaping' in service.name|lower %}
-                                <img src="{% static 'images/gardening.jpeg' %}" class="img-fluid rounded mb-3 service-thumb" alt="{{ service.name }}">
-                            {% elif 'paint' in service.name|lower or 'painting' in service.name|lower %}
-                                <img src="{% static 'images/painting.jpeg' %}" class="img-fluid rounded mb-3 service-thumb" alt="{{ service.name }}">
-                            {% elif 'carpent' in service.name|lower or 'wood' in service.name|lower %}
-                                <img src="{% static 'images/carpenter.jpeg' %}" class="img-fluid rounded mb-3 service-thumb" alt="{{ service.name }}">
-                            {% else %}
-                                <img src="{% static 'images/maintenence.jpeg' %}" class="img-fluid rounded mb-3 service-thumb" alt="{{ service.name }}">
-                            {% endif %}
-                        </div>
-                        <h5 class="card-title text-center">{{ service.name }}</h5>
-                        <p class="card-text text-center">{{ service.description }}</p>
-                        <p class="text-center text-muted">Starting from £{{ service.base_price }}</p>
+            <div class="col reveal">
+                <div class="card service-card h-100">
+                    <div style="overflow:hidden;">
+                        {% if 'plumbing' in service.name|lower %}
+                            <img src="{% static 'images/plumbing.jpg' %}" class="service-thumb" alt="{{ service.name }}">
+                        {% elif 'electrical' in service.name|lower or 'electric' in service.name|lower %}
+                            <img src="{% static 'images/electrician.jpeg' %}" class="service-thumb" alt="{{ service.name }}">
+                        {% elif 'clean' in service.name|lower %}
+                            <img src="{% static 'images/cleaning.jpeg' %}" class="service-thumb" alt="{{ service.name }}">
+                        {% elif 'garden' in service.name|lower %}
+                            <img src="{% static 'images/gardening.jpeg' %}" class="service-thumb" alt="{{ service.name }}">
+                        {% elif 'paint' in service.name|lower %}
+                            <img src="{% static 'images/painting.jpeg' %}" class="service-thumb" alt="{{ service.name }}">
+                        {% elif 'carpent' in service.name|lower %}
+                            <img src="{% static 'images/carpenter.jpeg' %}" class="service-thumb" alt="{{ service.name }}">
+                        {% else %}
+                            <img src="{% static 'images/maintenence.jpeg' %}" class="service-thumb" alt="{{ service.name }}">
+                        {% endif %}
+                    </div>
+                    <div class="card-body text-center px-4 pt-4">
+                        <h5 class="fw-bold mb-2">{{ service.name }}</h5>
+                        <p class="text-muted small">{{ service.description }}</p>
+                        <p class="fw-semibold text-primary mb-0">From £{{ service.base_price }}</p>
                     </div>
                     <div class="card-footer bg-transparent border-0 text-center pb-4">
-                        <a href="{% url 'service_request' service.id %}" class="btn btn-primary px-4">View Providers</a>
+                        <a href="{% url 'service_request' service.id %}" class="btn btn-primary px-4 rounded-pill">
+                            View Providers <i class="fas fa-arrow-right ms-1"></i>
+                        </a>
                     </div>
                 </div>
             </div>
             {% endfor %}
         </div>
-    </section>
+    </div>
+</section>
 
+<!-- ══ WHY CHOOSE US ══ -->
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5 reveal">
+            <h2 class="section-heading">Why Choose HomeFix?</h2>
+            <p class="text-muted mt-3">We make home maintenance simple, affordable and reliable</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4 reveal">
+                <div class="why-card h-100">
+                    <div class="why-icon"><i class="fas fa-shield-alt"></i></div>
+                    <h5 class="fw-bold mb-2">Fully Vetted Pros</h5>
+                    <p class="text-muted">Every provider is background-checked, insured and verified before joining our platform.</p>
+                </div>
+            </div>
+            <div class="col-md-4 reveal">
+                <div class="why-card h-100">
+                    <div class="why-icon"><i class="fas fa-clock"></i></div>
+                    <h5 class="fw-bold mb-2">Fast Response</h5>
+                    <p class="text-muted">Our team responds within hours and connects you to the right professional quickly.</p>
+                </div>
+            </div>
+            <div class="col-md-4 reveal">
+                <div class="why-card h-100">
+                    <div class="why-icon"><i class="fas fa-star"></i></div>
+                    <h5 class="fw-bold mb-2">Top Rated Service</h5>
+                    <p class="text-muted">Rated 4.9/5 by hundreds of satisfied customers across London, Manchester and Birmingham.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
-
-    <!-- Why Choose Us Section -->
-    <section class="py-5">
-        <h2 class="text-center mb-4">Why Choose Homefix</h2>
-        <div class="row">
-            <div class="col-lg-4 mb-4">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-center mb-3">
-                            <div class="text-warning">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                            </div>
-                        </div>
-                        <p class="card-text">"Excellent service! The plumber arrived on time and fixed our leaking pipe quickly. Very professional and friendly."</p>
-                        <div class="text-end">
-                            <p class="mb-0 fw-bold">- Sarah Johnson</p>
-                            <small class="text-muted">London</small>
-                        </div>
+<!-- ══ TESTIMONIALS ══ -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5 reveal">
+            <h2 class="section-heading">What Our Customers Say</h2>
+            <p class="text-muted mt-3">Real reviews from real homeowners</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-lg-4 reveal">
+                <div class="card testimonial-card h-100 p-4">
+                    <div class="text-warning mb-2">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                    </div>
+                    <p class="card-text text-muted">"Excellent service! The plumber arrived on time and fixed our leaking pipe quickly. Very professional and friendly."</p>
+                    <div class="mt-auto pt-3 border-top">
+                        <p class="mb-0 fw-bold">Sarah Johnson</p>
+                        <small class="text-muted">London</small>
                     </div>
                 </div>
             </div>
-            <div class="col-lg-4 mb-4">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-center mb-3">
-                            <div class="text-warning">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                            </div>
-                        </div>
-                        <p class="card-text">"I've used HomeFix for electrical work and gardening. Both times the service was outstanding. Will definitely use again!"</p>
-                        <div class="text-end">
-                            <p class="mb-0 fw-bold">- Michael Brown</p>
-                            <small class="text-muted">Manchester</small>
-                        </div>
+            <div class="col-lg-4 reveal">
+                <div class="card testimonial-card h-100 p-4">
+                    <div class="text-warning mb-2">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                    </div>
+                    <p class="card-text text-muted">"I've used HomeFix for electrical work and gardening. Both times the service was outstanding. Will definitely use again!"</p>
+                    <div class="mt-auto pt-3 border-top">
+                        <p class="mb-0 fw-bold">Michael Brown</p>
+                        <small class="text-muted">Manchester</small>
                     </div>
                 </div>
             </div>
-            <div class="col-lg-4 mb-4">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-center mb-3">
-                            <div class="text-warning">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="far fa-star"></i>
-                            </div>
-                        </div>
-                        <p class="card-text">"The cleaning service was thorough and efficient. My house hasn't been this clean in ages! Booking was easy and straightforward."</p>
-                        <div class="text-end">
-                            <p class="mb-0 fw-bold">- Emma Wilson</p>
-                            <small class="text-muted">Birmingham</small>
-                        </div>
+            <div class="col-lg-4 reveal">
+                <div class="card testimonial-card h-100 p-4">
+                    <div class="text-warning mb-2">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i>
+                    </div>
+                    <p class="card-text text-muted">"The cleaning service was thorough and efficient. My house hasn't been this clean in ages! Booking was easy and quick."</p>
+                    <div class="mt-auto pt-3 border-top">
+                        <p class="mb-0 fw-bold">Emma Wilson</p>
+                        <small class="text-muted">Birmingham</small>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
-</div>
+    </div>
+</section>
+
+<!-- ══ CTA ══ -->
+<section class="py-5 reveal" style="background: linear-gradient(135deg,#003366,#004080);">
+    <div class="container text-center text-white">
+        <h2 class="fw-bold mb-3">Ready to Get Started?</h2>
+        <p class="opacity-75 mb-4 lead">Join hundreds of satisfied homeowners across the UK.</p>
+        <a href="{% url 'providers_list' %}" class="btn btn-light btn-lg px-5 fw-bold rounded-pill me-3 shadow">
+            Book a Service
+        </a>
+        <a href="{% url 'contact' %}" class="btn btn-outline-light btn-lg px-4 rounded-pill">
+            Contact Us
+        </a>
+    </div>
+</section>
+
 {% endblock content %}

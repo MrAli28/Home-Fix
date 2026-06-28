@@ -1,7 +1,11 @@
 import os
 from pathlib import Path
+from dotenv import load_dotenv
 
 import dj_database_url
+
+# Load .env file for local development
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -139,11 +143,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/dashboard/'
 LOGOUT_REDIRECT_URL = '/'  
-
-import os
-from pathlib import Path
-
-import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -301,4 +300,4 @@ else:
     # Print emails to console if credentials aren't set
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER or 'noreply@homefix.com'
+DEFAULT_FROM_EMAIL = f"HomeFix <{EMAIL_HOST_USER}>" if EMAIL_HOST_USER else 'HomeFix <noreply@homefix.com>'
